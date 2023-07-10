@@ -1,0 +1,117 @@
+Ecommerce Webite Tutorial
+
+Hosting Link
+Bluehost India (only for India): https://webtechnicaltips.com/go/bluehost
+Bluehost out of India: https://webtechnicaltips.com/refer/bluehost
+
+
+Theme Link
+https://webtechnicaltips.com/go/blocksy
+
+
+Shopengine Plugin Link
+https://webtechnicaltips.com/go/shopengine
+
+
+Razorpay Gateway Link
+https://rzp.io/i/cmczmt2
+
+
+==================================================
+
+
+Theme
+Blocksy
+
+Plugin
+Blocksy Companion
+Elementor
+Font Awesome
+Product Slider and Carousel with Category for WooCommerce
+Razorpay for WooCommerce
+ShopEngine
+Smart Slider 3	
+Smash Balloon Instagram Feed
+WooCommerce
+WPForms Lite
+
+======================================================================
+
+
+order tracking code
+[woocommerce_order_tracking]
+
+
+
+wishlist
+<i class="far fa-solid fa-heart"></i>
+https://domainname.in/wishlist/
+
+
+Featured Products
+[wcpscwc_pdt_slider type="products" slide_to_show="4" autoplay="true" dots="false"]
+
+POPULAR RIGHT NOW
+[products limit="8" columns="4" orderby="id" order="DESC" visibility="visible"]
+
+[wcpscwc_pdt_slider type="products" slide_to_show="3" autoplay="true" dots="false"]
+
+
+Blog 
+[blocksy_posts limit="3" has_pagination="no"]
+
+
+instagram Short Code
+[instagram-feed feed=1]
+
+
+subscribe Form css class
+inline-fields wpforms-subscribe-form
+
+============================================================================
+
+CSS startes From here
+
+.onsale, 
+.out-of-stock-badge {
+	left: initial;
+	right: 15px;
+}
+
+.sp-wcsp-slider-area #sp-wcsp-slider-section-1353 .sp-wcsp-cat-item .sp-wcsp-cat-details .sp-wcsp-cat-details-content .sp-wcsp-cat-name a{
+
+    font-size: 13px!important;
+    font-weight: 600!important;
+}
+
+.sp-wcsp-slider-area #sp-wcsp-slider-section-1353 .sp-wcsp-cat-item .sp-wcsp-cat-details .sp-wcsp-cat-details-content {
+    padding: 0px!important;
+}
+
+@media only screen and (max-width: 600px) {
+	.sp-wcsp-slider-area #sp-wcsp-slider-section-1353 .sp-wcsp-cat-item .sp-wcsp-cat-details .sp-wcsp-cat-details-content .sp-wcsp-cat-name a{
+
+    font-size: 10px!important;
+    font-weight: 500!important;
+}
+}
+
+@media only screen and (max-width: 600px) {
+	.sp-wcsp-slider-area #sp-wcsp-slider-section-1353 .sp-wcsp-cat-item .sp-wcsp-cat-details .sp-wcsp-cat-details-content {
+    padding: 0px!important;
+}
+}
+
+.shopengine-wishlist.badge {
+    padding: 15px 6px!important;
+}
+
+==========================================================================
+
+
+
+
+
+
+
+

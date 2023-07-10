@@ -1,0 +1,59 @@
+.userListContainer {
+    display: flex;
+}
+
+.userListTable {
+    flex: 1;
+    padding: 2rem;
+
+}
+
+.userListHeader {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 2rem;
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+
+.userBtn {
+    border-radius: 50% !important;
+    width: 15%;
+    margin: 0 10px;
+    background-color: transparent !important;
+}
+
+.userBtn:hover {
+    background-color: #EDF2F7 !important;
+}
+
+.userAction, .tableAction {
+    text-align: center !important;
+    border: 2px solid #EDF2F7 !important;
+}
+
+.userAction {
+    background-color: tomato !important;
+    color: #fff !important;
+}
+
+.userIcon {
+    color: rgb(94, 94, 94) !important;
+}
+
+.userGreen {
+    color: #14A44D !important;
+}
+
+.userRed {
+    color: #DC4C64 !important;
+}
+
+.linkIcon {
+    width: 2.5vw;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

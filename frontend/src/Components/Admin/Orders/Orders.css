@@ -1,0 +1,77 @@
+.orderListContainer {
+    display: flex;
+}
+
+.orderListTable {
+    flex: 1;
+    padding: 2rem;
+
+}
+
+.orderListHeader {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 2rem;
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+.orderBtn {
+    border-radius: 50% !important;
+    width: 15%;
+    margin: 0 10px;
+    background-color: transparent !important;
+}
+
+.orderBtn:hover {
+    background-color: #EDF2F7 !important;
+}
+
+.orderAction {
+    background-color: tomato !important;
+    color: #fff !important;
+}
+
+.orderAction, .tableAction {
+    text-align: center !important;
+    border: 2px solid #EDF2F7 !important;
+}
+
+
+.tableActionBtn{
+    display: flex;
+    align-items: center ;
+    justify-content: center ;
+}
+
+.linkIcon{
+    width: 2.5vw;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.orderIcon {
+    color: rgb(94, 94, 94);
+}
+
+.orderGreen {
+    color: #14A44D ;
+}
+
+.orderRed {
+    color: #DC4C64 ;
+}
+
+.reviewYellow {
+    color: #f0ad4e ;
+}
+
+.reviewBlue {
+    /* color: #5bc0de !important; */
+    color: #0275d8;
+}
+
+.orderHide {
+    display: none !important;
+}

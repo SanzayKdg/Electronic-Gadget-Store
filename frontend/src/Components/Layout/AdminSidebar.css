@@ -1,0 +1,87 @@
+.adminSidebar {
+    width: 25vw;
+    border-right: 1px solid #AAA;
+    margin-right: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 0 1rem;
+
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+    cursor: pointer;
+}
+
+.logo:hover{
+    box-shadow: 0px 0px 10px 0px  rgba(255, 99, 71, 0.581);
+}
+
+
+.sidebar__item {
+    margin: 1.1rem 0;
+    padding: 1rem 2rem !important;
+    width: 100% !important;
+}
+
+.sidebar__item>p, .productsSide {
+    font-family: "Poppins", sans-serif !important;
+    font-weight: 500 !important;
+    font-size: 1rem !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+}
+
+.productsButton {
+    width: 100%;
+    padding: 0 !important;
+    background-color: #fff !important;
+}
+
+.menuList {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    width: 160% !important;
+    border-radius: 0 !important;
+    padding: 2px !important;
+    border: none !important;
+    box-shadow: 1px 1px 1px 0px #aaa !important;
+}
+
+.menuItem {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px !important;
+    display: flex;
+    justify-content: flex-start;
+
+}
+
+
+.sidebar__items>p {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 110% !important;
+
+}
+
+.muiIcons {
+    margin-right: 10px !important;
+}
+
+p {
+    color: #777676;
+}
+
+.sidebar__item:hover, .sidebar__item>p:hover, .productsButton:hover, .sidebar__items>p:hover {
+    color: #ff6347 !important;
+
+
+}

@@ -1,0 +1,73 @@
+.reviewListContainer {
+    display: flex;
+}
+
+.reviewListTable {
+    flex: 1;
+    padding: 2rem;
+
+}
+
+.adminReview__form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-bottom: 10rem;
+}
+
+.adminReview__form1{
+    width: 65% !important;
+}
+
+.form__item {
+    display: flex;
+    flex-direction: column;
+    margin: 1.5rem 0;
+    border-radius: 5px !important;
+}
+
+.review__btn {
+    color: #fff !important;
+    background-color: #FF6347 !important;
+}
+
+.reviewListHeader, .noReviews {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 2rem;
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+
+.reviewBtn {
+    border-radius: 50% !important;
+    width: 15%;
+    margin: 0 10px;
+    background-color: transparent !important;
+}
+
+.reviewBtn:hover {
+    background-color: #EDF2F7 !important;
+}
+
+.reviewAction, .tableAction {
+    text-align: center !important;
+    border: 2px solid #EDF2F7 !important;
+}
+.reviewAction {
+    background-color: tomato !important;
+    color: #fff !important;
+}
+.reviewIcon {
+    color: rgb(94, 94, 94) !important;
+}
+
+.reviewGreen {
+    color: #14A44D !important;
+}
+
+.reviewRed {
+    color: #DC4C64 !important;
+}

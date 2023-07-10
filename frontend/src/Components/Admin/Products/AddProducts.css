@@ -1,0 +1,41 @@
+.addProductsContainer {
+    display: flex;
+}
+
+.addProductHeader {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 2rem;
+}
+
+.productForm {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+
+}
+
+.addProductForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+}
+
+.addProduct__btn {
+    color: #fff !important;
+    background-color: #FF6347 !important;
+    border-radius: 0 !important;
+}
+
+#productImagePreview {
+    width: 100%;
+    display: flex;
+    overflow: auto;
+}
+
+#productImagePreview>img {
+    width: 4vw;
+    margin: 0 0.5rem;
+}
