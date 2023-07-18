@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import user from "./routes/User.js";
 import product from "./routes/Product.js";
 import order from "./routes/Order.js";
+import payment from "./routes/Payment.js";
 
 const app = express();
 
@@ -41,5 +42,6 @@ app.get("/", (req, res) => {
 app.use("/api/v1", user);
 app.use("/api/v1", product);
 app.use("/api/v1", order);
+app.use("/api/v1", payment);
 
 export default app;

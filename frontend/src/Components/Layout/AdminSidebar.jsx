@@ -19,7 +19,7 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import { logout } from "../../Redux/Actions/admin";
-import { clearErrors, clearMessage } from "../../Redux/Slices/admin";
+// import { clearErrors, clearMessage } from "../../Redux/Slices/admin";
 const AdminSidebar = () => {
   const alert = useAlert();
   const dispatch = useDispatch();
@@ -28,10 +28,10 @@ const AdminSidebar = () => {
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
+      // dispatch(clearErrors());
     }
     if (success) {
-      dispatch(clearMessage());
+      // dispatch(clearMessage());
       alert.success("Logged Out Successfully");
       navigate("/");
     }

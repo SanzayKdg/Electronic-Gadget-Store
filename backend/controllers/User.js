@@ -3,6 +3,7 @@ import { sendMail } from "../utils/SendMail.js";
 import sendToken from "../utils/SendToken.js";
 import cloudinary from "cloudinary";
 import crypto from "crypto";
+
 // Create a new user
 export const registerUser = async (req, res, next) => {
   try {

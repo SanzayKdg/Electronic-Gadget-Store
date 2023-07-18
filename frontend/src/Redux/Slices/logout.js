@@ -1,4 +1,15 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { api } from "../Actions/axios";
+
+// export const logout = createAsyncThunk("Slices/logout")
+// const logoutSlice = createSlice({
+//   name: "logout",
+//   initialState: {},
+//   reducers: {},
+//   extraReducers : (builder)=> {
+//     builder.addCase()
+//   }
+// });
 const logoutSlice = createSlice({
   name: "logout",
   initialState: {},

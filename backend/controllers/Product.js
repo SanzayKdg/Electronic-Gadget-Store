@@ -148,7 +148,7 @@ export const updateProducts = async (req, res, next) => {
 // Deleting Products
 export const deleteProducts = async (req, res, next) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) {
       return next(
         res.status(404).json({ success: false, message: "Product Not Found" })
@@ -265,4 +265,50 @@ export const getAllProducts = async (req, res) => {
       message: error.message,
     });
   }
+};
+
+// Delete reviews
+export const deleteProductReviews = async (req, res, next) => {
+  const product = await productModel.findById(req.query.productId);
+  if (!product) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Product Not Found" });
+  }
+
+  const reviews = product.reviews.filter(
+    (rev) => rev._id.toString() !== req.query.id.toString()
+  );
+
+  let avg = 0;
+  reviews.forEach((rev) => {
+    avg += rev.rating;
+  });
+
+  let ratings = 0;
+  if (reviews.length === 0) {
+    ratings = 0;
+  } else {
+    ratings = avg / reviews.length;
+  }
+
+  const numOfReviews = reviews.length;
+
+  await productModel.findByIdAndUpdate(
+    req.query.productId,
+    {
+      reviews,
+      ratings,
+      numOfReviews,
+    },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+  });
 };

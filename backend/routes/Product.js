@@ -2,6 +2,7 @@ import express from "express";
 import { authorizedRoles, isAuthenticated } from "../middlewares/Auth.js";
 import {
   createProduct,
+  deleteProductReviews,
   deleteProducts,
   getAllProducts,
   getAllreviews,
@@ -28,6 +29,9 @@ router
   .delete(isAuthenticated, authorizedRoles("admin"), deleteProducts);
 
 router.route("/product/review/new").put(isAuthenticated, newReview);
-router.route("/product/reviews").get(getAllreviews);
+router
+  .route("/product/reviews")
+  .get(getAllreviews)
+  .delete(isAuthenticated, deleteProductReviews);
 
 export default router;

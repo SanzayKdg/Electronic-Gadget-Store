@@ -12,8 +12,9 @@ import { useAlert } from "react-alert";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../Layout/Loader/Loader";
-import { login } from "../../../Redux/Actions/admin";
-import { clearErrors } from "../../../Redux/Slices/admin";
+import { login } from "../../../Redux/Slices/admin";
+// import { login } from "../../../Redux/Actions/admin";
+// import { clearErrors, login } from "../../../Redux/Slices/admin";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -29,14 +30,15 @@ const Login = () => {
   // login Function
   const loginHandler = (e) => {
     e.preventDefault();
-    dispatch(login(email, password));
+    dispatch(login({ email, password }));
+    // dispatch(login(email, password));
   };
 
   // useEffect
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
+      // dispatch(clearErrors());
     }
     if (isAuthenticated) {
       navigate("/dashboard");

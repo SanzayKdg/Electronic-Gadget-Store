@@ -18,7 +18,7 @@ import { useEffect } from "react";
 import { useAlert } from "react-alert";
 import { loadAllUser } from "../../../Redux/Actions/admin";
 import Loader from "../../Layout/Loader/Loader";
-import { clearErrors } from "../../../Redux/Slices/admin";
+// import { clearErrors } from "../../../Redux/Slices/admin";
 import { Link } from "react-router-dom";
 
 const Users = () => {
@@ -29,7 +29,7 @@ const Users = () => {
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
+      // dispatch(clearErrors());
     }
 
     dispatch(loadAllUser());

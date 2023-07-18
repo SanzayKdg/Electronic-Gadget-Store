@@ -37,6 +37,36 @@ export const newOrder = async (req, res, next) => {
   }
 };
 
+// get single order or order details
+export const getSingleOrder = async (req, res, next) => {
+  const order = await Order.findById(req.params.id).populate(
+    "user",
+    "name email"
+  );
+  if (!order) {
+    return next(
+      res.status(404).json({
+        message: "Order not found with this id",
+      })
+    );
+  }
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+};
+
+// get logged in user order details
+export const myOrders = async (req, res, next) => {
+  const orders = await Order.find({ user: req.user._id });
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+};
+
 // get all orders -- admin
 export const allOrdersAdmin = async (req, res, next) => {
   try {
@@ -122,3 +152,19 @@ async function updateStock(id, quantity) {
     });
   }
 }
+
+// delete order --admin routes
+export const deleteOrder = async (req, res, next) => {
+  const order = await Order.findByIdAndDelete(req.params.id);
+
+  if (!order) {
+    return next(
+      res
+        .status(404)
+        .json({ success: false, message: "Order not found with this id" })
+    );
+  }
+  res.status(200).json({
+    success: true,
+  });
+};
