@@ -16,9 +16,10 @@ import {
 } from "chart.js";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../Layout/Loader/Loader";
-import { loadAllUser } from "../../../Redux/Actions/admin";
-import { allProducts } from "../../../Redux/Actions/product";
 import { useAlert } from "react-alert";
+import { getAllProductsAsync } from "../../../Redux/Slices/Products/productSlice";
+import { getAllUserAsync } from "../../../Redux/Slices/Users/userSlice";
+import { getAllOrdersAsync } from "../../../Redux/Slices/Orders/orderSlice";
 
 ChartJS.register(
   CategoryScale,
@@ -31,10 +32,12 @@ ChartJS.register(
   Legend
 );
 const Dashboard = () => {
-  let { loading, isAuthenticated, error } = useSelector((state) => state.admin);
-  let { products } = useSelector((state) => state.allProducts);
-  let { users } = useSelector((state) => state.allUsers);
-  let { orders } = useSelector((state) => state.allOrder);
+  const { loading, isAuthenticated, error } = useSelector(
+    (state) => state.auth
+  );
+  const { users } = useSelector((state) => state.user);
+  let { products } = useSelector((state) => state.product);
+  const { orders } = useSelector((state) => state.order);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -43,19 +46,21 @@ const Dashboard = () => {
     if (error) {
       alert.error(error);
     }
-    dispatch(loadAllUser());
-    dispatch(allProducts());
-  }, [navigate, isAuthenticated, dispatch, error, alert]);
+
+    dispatch(getAllUserAsync());
+    dispatch(getAllProductsAsync());
+    dispatch(getAllOrdersAsync());
+  }, [dispatch, error, alert]);
   let outOfStock = 0;
-  products &&
-    products.forEach((item) => {
+  products.products &&
+    products.products.forEach((item) => {
       if (item.stock === 0) {
         outOfStock += 1;
       }
     });
   let totalAmt = 0;
-  orders &&
-    orders.forEach((item) => {
+  orders.orders &&
+    orders.orders.forEach((item) => {
       totalAmt += item.totalPrice;
     });
   const lineState = {
@@ -70,6 +75,12 @@ const Dashboard = () => {
     ],
   };
 
+  let productLength = 0;
+
+  productLength = setTimeout(() => {
+    return products.length;
+  }, 2000);
+
   const doughnutState = {
     labels: ["Out of Stock", "In Stock"],
     datasets: [
@@ -77,7 +88,7 @@ const Dashboard = () => {
         backgroundColor: ["#00A6B4", "#6800B4"],
         hoverBackgroundColor: ["#4B5000", "#35014F"],
 
-        data: [outOfStock, 5 - outOfStock],
+        data: [outOfStock, productLength - outOfStock],
       },
     ],
   };
@@ -106,16 +117,20 @@ const Dashboard = () => {
                     <Link to="/admin/products">
                       <p className="summaryCircle">Product</p>
                       <p className="summaryCircle">
-                        {products && products.length}
+                        {products.products && products.products.length}
                       </p>
                     </Link>
                     <Link to="/admin/orders">
                       <p className="summaryCircle">Orders</p>
-                      <p className="summaryCircle">{orders && orders.length}</p>
+                      <p className="summaryCircle">
+                        {orders.orders && orders.orders.length}
+                      </p>
                     </Link>
                     <Link to="/admin/users">
                       <p className="summaryCircle">Users</p>
-                      <p className="summaryCircle">{users && users.length}</p>
+                      <p className="summaryCircle">
+                        {users.users && users.users.length}
+                      </p>
                     </Link>
                   </div>
                 </div>

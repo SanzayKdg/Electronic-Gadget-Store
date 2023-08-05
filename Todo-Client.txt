@@ -1,0 +1,19 @@
+Client Screens
+
+Products -- Done
+ProductDetail -- Done
+Register -- Done
+Login -- Done
+Account -- Done
+
+
+Home 
+Shipping Details -- Done
+Proceed To Pay -- Done
+Payment Details -- Done
+Update Profile -- Done
+Change Password -- Done
+Messages -- Done
+My Orders
+Wishlists
+Cart

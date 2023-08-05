@@ -15,36 +15,36 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
-import { allProducts, deleteProduct } from "../../../Redux/Actions/product";
-import { clearErrors } from "../../../Redux/Slices/getAllProducts";
-import { clearMessage } from "../../../Redux/Slices/deleteProductSlices";
 import Loader from "../../Layout/Loader/Loader";
 import { Link, Navigate, useParams } from "react-router-dom";
+import {
+  deleteProductAsync,
+  getAllProductsAsync,
+} from "../../../Redux/Slices/Products/productSlice";
 const AllProducts = () => {
-  const { loading, products, error } = useSelector(
-    (state) => state.allProducts
-  );
-  const { success, error: deleteError } = useSelector(
-    (state) => state.deleteProduct
-  );
+  const {
+    loading,
+    products,
+    error,
+    success: deleteSuccess,
+  } = useSelector((state) => state.product);
+ 
   const alert = useAlert();
   const dispatch = useDispatch();
   const { id } = useParams();
   const deleteHandler = (productId) => {
     console.log("My product id is", productId);
-    dispatch(deleteProduct(productId));
+    dispatch(deleteProductAsync(productId));
   };
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
     }
-    if (success) {
+    if (deleteSuccess) {
       alert.success("Product Deleted Successfully");
-      dispatch(clearMessage());
     }
-    dispatch(allProducts());
-  }, [alert, error, dispatch, success]);
+    dispatch(getAllProductsAsync());
+  }, [alert, error, dispatch, deleteSuccess]);
 
   return (
     <div className="productListContainer">
@@ -67,8 +67,8 @@ const AllProducts = () => {
                       <Th className="productAction">Actions</Th>
                     </Tr>
                   </Thead>
-                  {products &&
-                    products.map((item, index) => (
+                  {products.products &&
+                    products.products.map((item, index) => (
                       <Fragment key={index}>
                         <Tbody>
                           <Tr>
@@ -85,7 +85,10 @@ const AllProducts = () => {
                               {item.stock}
                             </Td>
                             <Td className="tableAction">
-                              <Link to= {`/admin/product/${item._id}`} className="productBtn">
+                              <Link
+                                to={`/admin/product/${item._id}`}
+                                className="productBtn"
+                              >
                                 <EditIcon className="productIcon" />
                               </Link>
                               <Button

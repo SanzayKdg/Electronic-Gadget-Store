@@ -8,18 +8,46 @@ import Orders from "./Components/Admin/Orders/Orders";
 import Users from "./Components/Admin/Users/Users";
 import Reviews from "./Components/Admin/Reviews/Reviews";
 import { useSelector } from "react-redux";
-import ProtectedRoute from "./Components/Route/ProtectedRoute";
+// import ProtectedRoute from "./Components/Route/ProtectedRoute";
 import UpdateProduct from "./Components/Admin/Products/UpdateProduct.jsx";
 import UpdateOrder from "./Components/Admin/Orders/UpdateOrder";
 import UpdateUsers from "./Components/Admin/Users/UpdateUsers";
 function App() {
-  const { user, isAuthenticated } = useSelector((state) => state.admin);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  // const { user, isAuthenticated } = useSelector((state) => state.login);
   return (
     <Router>
       <Routes>
         <Route exact path="/" element={<Login />} />
-        {/* {isLogin && <Route exact path="/dashboard" Component={Dashboard} />} */}
-        <Route
+        {isAuthenticated && (
+          <Route exact path="/dashboard" Component={Dashboard} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/product/add" Component={AddProducts} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/products" Component={AllProducts} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/product/:id" Component={UpdateProduct} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/orders" Component={Orders} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/users" Component={Users} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/products/reviews" Component={Reviews} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/order/:id" Component={UpdateOrder} />
+        )}
+        {isAuthenticated && (
+          <Route exact path="/admin/user/:id" Component={UpdateUsers} />
+        )}
+
+        {/* <Route
           exact
           path="/dashboard"
           element={<ProtectedRoute isAdmin={true} Component={Dashboard} />}
@@ -63,7 +91,7 @@ function App() {
           exact
           path="/admin/user/:id"
           element={<ProtectedRoute isAdmin={true} Component={UpdateUsers} />}
-        />
+        /> */}
       </Routes>
     </Router>
   );

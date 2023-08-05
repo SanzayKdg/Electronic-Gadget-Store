@@ -1,5 +1,4 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import adminReducer from "./Slices/admin";
 import {
   FLUSH,
   PAUSE,
@@ -9,6 +8,12 @@ import {
   persistReducer,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import authReducer from "./Slices/Auth/authSlice";
+import orderReducer from "./Slices/Orders/orderSlice";
+import productReducer from "./Slices/Products/productSlice";
+import userReducer from "./Slices/Users/userSlice";
+
+import loginReducer from "./Slices/login";
 import allUsersReducer from "./Slices/getAllUsers";
 import allProductsReducer from "./Slices/getAllProducts";
 import addProdutcsReducer from "./Slices/addProdutcs";
@@ -19,6 +24,7 @@ import allOrderReducer from "./Slices/allOrderSlice";
 import updateOrderReducer from "./Slices/updateOrder";
 import updateUserReducer from "./Slices/updateUser";
 import allReviewsReducer from "./Slices/allReviews";
+
 const persistConfig = {
   key: "root",
   version: 1,
@@ -27,17 +33,21 @@ const persistConfig = {
 
 // All reducer combined
 const reducer = combineReducers({
-  admin: adminReducer,
-  logout: logoutReducer,
-  allUsers: allUsersReducer,
-  allProducts: allProductsReducer,
-  addProduct: addProdutcsReducer,
-  updateProduct: updateProductReducer,
-  deleteProduct: deleteProductReducer,
-  allOrder: allOrderReducer,
-  updateOrder: updateOrderReducer,
-  updateUser: updateUserReducer,
-  allReviews: allReviewsReducer,
+  // auth: authReducer,
+  // user: userReducer,
+  // product: productReducer,
+  // order: orderReducer,
+  // login: loginReducer,
+  // logout: logoutReducer,
+  // allUsers: allUsersReducer,
+  // allProducts: allProductsReducer,
+  // addProduct: addProdutcsReducer,
+  // updateProduct: updateProductReducer,
+  // deleteProduct: deleteProductReducer,
+  // allOrder: allOrderReducer,
+  // updateOrder: updateOrderReducer,
+  // updateUser: updateUserReducer,
+  // allReviews: allReviewsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);
@@ -51,6 +61,27 @@ const store = configureStore({
         ignoreActions: [FLUSH, REHYDRATE, PAUSE, PURGE, REGISTER],
       },
     }),
+
+  reducer: {
+    auth: authReducer,
+    user: userReducer,
+    product: productReducer,
+    order: orderReducer,
+
+    // login: loginReducer,
+    // logout: logoutReducer,
+    // allUsers: allUsersReducer,
+    // allProducts: allProductsReducer,
+    // addProduct: addProdutcsReducer,
+    // updateProduct: updateProductReducer,
+    // deleteProduct: deleteProductReducer,
+    // allOrder: allOrderReducer,
+    // updateOrder: updateOrderReducer,
+    // updateUser: updateUserReducer,
+    // allReviews: allReviewsReducer,
+  },
 });
 
 export default store;
+
+// may require later

@@ -1,0 +1,18 @@
+Admin Components
+2. Dashboard -- Done
+1. Login -- Done
+3. Products
+    i. Add Products - Done
+    ii. All Products - Done
+    iii. Update Products - Done
+4. Users
+    i. All Users - Done
+    ii. Update Users - Done
+5. Orders   
+    i. All Orders - Done
+    ii. Update Orders - Done
+6. Reviews -- Done
+
+Todo
+State Management in all
+Persist state when reload

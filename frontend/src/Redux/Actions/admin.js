@@ -1,4 +1,4 @@
-// import { loginRequest, loginSuccess, loginFail } from "../Slices/admin";
+import { loginRequest, loginSuccess, loginFail } from "../Slices/login";
 import {
   allUsersFail,
   allUsersRequest,
@@ -40,7 +40,7 @@ export const logout = () => async (dispatch) => {
     dispatch(logoutRequest());
     const { data } = await api.get("/logout");
     dispatch(logoutSuccess(data));
-    localStorage.removeItem("persist:root");
+    // localStorage.removeItem("persist:root");
   } catch (error) {
     dispatch(logoutFail(error.message));
   }

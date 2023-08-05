@@ -1,6 +1,6 @@
 import express from "express";
-import { processPayment, sendStripeApiKey } from "../controllers/Payment";
-import { isAuthenticated } from "../middlewares/Auth";
+import { processPayment, sendStripeApiKey } from "../controllers/Payment.js";
+import { isAuthenticated } from "../middlewares/Auth.js";
 
 const router = express.Router();
 

@@ -13,12 +13,11 @@ import AdminSidebar from "../../Layout/AdminSidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { laptop, smartPhones } from "../../../Data/ProductCategories";
 import { useAlert } from "react-alert";
-import { clearErrors, clearMessage } from "../../../Redux/Slices/addProdutcs";
-import { addProduct } from "../../../Redux/Actions/product";
 import Loader from "../../Layout/Loader/Loader";
+import { createProductAsync } from "../../../Redux/Slices/Products/productSlice";
 
 const AddProducts = () => {
-  const { loading, error, success } = useSelector((state) => state.addProduct);
+  const { loading, error, success } = useSelector((state) => state.product);
   const alert = useAlert();
   const dispatch = useDispatch();
   const [name, setName] = useState("");
@@ -71,7 +70,7 @@ const AddProducts = () => {
       productData.append("images", image);
     });
 
-    dispatch(addProduct(productData));
+    dispatch(createProductAsync(productData));
     clearForm();
   };
 
@@ -79,13 +78,11 @@ const AddProducts = () => {
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
     }
     if (success) {
-      dispatch(clearMessage());
       alert.success("Product Added Successfully");
     }
-  }, [error, alert, dispatch, success]);
+  }, [error, alert, success]);
 
   return (
     <div className="addProductsContainer">

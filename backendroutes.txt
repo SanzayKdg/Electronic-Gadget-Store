@@ -1,0 +1,35 @@
+USERS
+
+/register
+/verify
+/login
+/logout
+/profile
+/password/forgot
+/password/reset/:token
+/password/update
+/profile/update
+/admin/users -> get all users
+/admin/user/:id -> update and delete users
+
+PRODUCTS
+
+/products
+/products/:id
+/product/review/new
+/product/reviews
+/product/new -> add products --admin
+/admin/products -> getProductsAdmin
+/product/:id -> update and delete products
+
+ORDERS
+
+/order/new
+/order/:id
+/orders/my_orders
+/admin/orders -> all orders
+/admin/order/:id -> update and delete order
+
+PAYMENT
+/payment/process
+/stripeapikey

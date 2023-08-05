@@ -19,25 +19,29 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import { logout } from "../../Redux/Actions/admin";
+import { logoutAsync } from "../../Redux/Slices/Auth/authSlice";
 // import { clearErrors, clearMessage } from "../../Redux/Slices/admin";
 const AdminSidebar = () => {
   const alert = useAlert();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { success, error } = useSelector((state) => state.logout);
+  const { error, success } = useSelector((state) => state.auth);
+  // const { error, isAuthenticated } = useSelector((state) => state.logout);
   useEffect(() => {
     if (error) {
       alert.error(error);
       // dispatch(clearErrors());
     }
-    if (success) {
+    // if (isAuthenticated === false) {
+    if (success === false) {
       // dispatch(clearMessage());
       alert.success("Logged Out Successfully");
       navigate("/");
     }
-  }, [alert]);
+  }, [error, alert, success, navigate]);
 
   const logoutHandler = () => {
+    // dispatch(logoutAsync());
     dispatch(logout());
   };
   return (

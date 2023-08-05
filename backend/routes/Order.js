@@ -11,15 +11,15 @@ import { authorizedRoles, isAuthenticated } from "../middlewares/Auth.js";
 
 const router = express.Router();
 
+// USER ROLE 
 router.route("/order/new").post(isAuthenticated, newOrder);
+router.route("/order/:id").get(isAuthenticated, getSingleOrder);
+router.route("/orders/my_orders").get(isAuthenticated, myOrders);
 
+// ADMIN ROLE
 router
   .route("/admin/orders")
   .get(isAuthenticated, authorizedRoles("admin"), allOrdersAdmin);
-
-router.route("/order/:id").get(isAuthenticated, getSingleOrder);
-
-router.route("/orders/my_orders").get(isAuthenticated, myOrders);
 
 router
   .route("/admin/order/:id")

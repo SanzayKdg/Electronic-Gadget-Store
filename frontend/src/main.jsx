@@ -13,18 +13,18 @@ const options = {
   positions: positions.BOTTOM_CENTER,
   transitions: transitions.SCALE,
 };
-let persistor = persistStore(store);
+// let persistor = persistStore(store);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <AlertProvider template={AlertTemplate} {...options}>
-          <ChakraProvider>
-            <App />
-          </ChakraProvider>
-        </AlertProvider>
-      </PersistGate>
+      {/* <PersistGate loading={null} persistor={persistor}> */}
+      <AlertProvider template={AlertTemplate} {...options}>
+        <ChakraProvider>
+          <App />
+        </ChakraProvider>
+      </AlertProvider>
+      {/* </PersistGate> */}
     </Provider>
   </React.StrictMode>
 );

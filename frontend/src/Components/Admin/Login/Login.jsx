@@ -12,9 +12,7 @@ import { useAlert } from "react-alert";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../Layout/Loader/Loader";
-import { login } from "../../../Redux/Slices/admin";
-// import { login } from "../../../Redux/Actions/admin";
-// import { clearErrors, login } from "../../../Redux/Slices/admin";
+import { loginAsync } from "../../../Redux/Slices/Auth/authSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,26 +22,28 @@ const Login = () => {
   const alert = useAlert();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, loading, isAuthenticated } = useSelector(
-    (state) => state.admin
+  const { user, error, loading, isAuthenticated } = useSelector(
+    (state) => state.auth
   );
+
+
   // login Function
   const loginHandler = (e) => {
     e.preventDefault();
-    dispatch(login({ email, password }));
-    // dispatch(login(email, password));
+    dispatch(loginAsync({ email, password }));
   };
 
   // useEffect
   useEffect(() => {
     if (error) {
       alert.error(error);
-      // dispatch(clearErrors());
     }
+
     if (isAuthenticated) {
+      alert.success("Login Success");
       navigate("/dashboard");
     }
-  }, [dispatch, alert, navigate, error, isAuthenticated]);
+  }, [alert, navigate, error, isAuthenticated]);
 
   return (
     <div className="adminLogin__formContainer">
