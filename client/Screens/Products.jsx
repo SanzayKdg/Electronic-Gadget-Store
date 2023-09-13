@@ -17,9 +17,8 @@ import { Button, Card } from "react-native-paper";
 import Menu from "react-native-vector-icons/MaterialIcons";
 import Close from "react-native-vector-icons/MaterialIcons";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors } from "../Redux/Product/allProducts";
-import { allProductsAction, productDetailsAction } from "../Redux/Action";
 import Loader from "../Components/Loader";
+import { getAllProducts } from "../features/productSlice";
 
 const Products = ({ navigation }) => {
   const [rating, setRating] = useState(0);
@@ -29,18 +28,18 @@ const Products = ({ navigation }) => {
     setOpen(!open);
   };
 
-  const { loading, products, productsCount, resultPerPage, error } =
-    useSelector((state) => state.allProducts);
+  const { loading, products, error } = useSelector((state) => state.product);
+  // const { loading, products, productsCount, resultPerPage, error } =
+  //   useSelector((state) => state.allProducts);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (error) {
       alert(error);
-      dispatch(clearErrors());
     }
-    dispatch(allProductsAction());
-  }, [alert, error, dispatch]);
+    dispatch(getAllProducts());
+  }, [error, dispatch]);
 
   return (
     <View style={productsStyle.productContainer}>
@@ -218,7 +217,6 @@ const productsStyle = StyleSheet.create({
     backgroundColor: "#AAA1",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    paddingBottom: 100,
   },
   expandBtn: {
     backgroundColor: "#FFF",

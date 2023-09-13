@@ -33,3 +33,13 @@ ORDERS
 PAYMENT
 /payment/process
 /stripeapikey
+
+CART
+/cart/new
+/cart/all
+/cart/:id
+
+
+SHIPPING
+/shipping/new
+/shipping-detail/:id

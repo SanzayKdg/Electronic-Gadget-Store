@@ -32,7 +32,7 @@ const Footer = () => {
       </TouchableOpacity>
       <TouchableOpacity
         style={footerStyle.footerIconContainer}
-        onPress={() => navigation.navigate("ChangePassword")}
+        onPress={() => navigation.navigate("Account")}
       >
         <Person name="person" size={25} style={footerStyle.footerIcon} />
         <Text style={footerStyle.footerText}>Account</Text>

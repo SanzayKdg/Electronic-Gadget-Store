@@ -14,6 +14,6 @@ Payment Details -- Done
 Update Profile -- Done
 Change Password -- Done
 Messages -- Done
-My Orders
-Wishlists
-Cart
+My Orders -- Done
+Wishlists -- Done
+Cart -- Done

@@ -4,9 +4,9 @@ const orderSchema = new mongoose.Schema({
   shippingInfo: {
     address: { type: String, required: true },
     city: { type: String, required: true },
-    state: { type: String, required: true },
-    country: { type: String, required: true },
-    pinCode: { type: Number, required: true },
+    email: { type: String, required: true },
+    province: { type: String, required: true },
+    zipCode: { type: Number, required: true },
     contact: { type: String, required: true },
   },
 
@@ -33,7 +33,7 @@ const orderSchema = new mongoose.Schema({
   paymentInfo: {
     id: { type: String, required: true },
     method: { type: String, required: true },
-    status: { type: String, required: true },
+    status: { type: String, required: true, default: "processing" },
   },
 
   paidAt: { type: Date },

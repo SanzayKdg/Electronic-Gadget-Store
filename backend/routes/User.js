@@ -3,7 +3,6 @@ import {
   deleteUser,
   forgotPassword,
   getAllUsers,
-  getProfile,
   loginUser,
   logout,
   passwordRecovery,
@@ -21,7 +20,6 @@ router.route("/register").post(registerUser);
 router.route("/verify").post(isAuthenticated, verfiyAccount);
 router.route("/login").post(loginUser);
 router.route("/logout").get(logout);
-router.route("/profile").get(isAuthenticated, getProfile);
 router.route("/password/forgot").post(forgotPassword);
 router.route("/password/reset/:token").put(passwordRecovery);
 
@@ -38,4 +36,3 @@ router
   .delete(isAuthenticated, authorizedRoles("admin"), deleteUser);
 
 export default router;
-

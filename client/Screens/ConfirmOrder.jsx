@@ -5,22 +5,58 @@ import {
   StatusBar,
   Image,
   TextInput,
+  ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import ShippingTruck from "react-native-vector-icons/MaterialCommunityIcons";
 import CheckCircle from "react-native-vector-icons/MaterialCommunityIcons";
 import Payment from "react-native-vector-icons/MaterialIcons";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../Components/Loader";
+import { getCartItems } from "../features/cartSlice";
 
-const ConfirmOrder = () => {
-    const navigation = useNavigation()
-const paymentProcessHandler =()=> {
-    navigation.navigate('PaymentDetails')
-}
+const ConfirmOrder = ({ nav, route }) => {
+  const navigation = useNavigation();
+
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, carts, error } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
+
+  const cart_total_amount =
+    carts &&
+    carts.reduce((acc, cur) => acc + cur.quantity * cur.product.price, 0);
+
+  const sub_total = cart_total_amount / 1.13;
+  const vat_amount = sub_total * 0.13;
+  const shipping_charge = 100;
+  const sum_total = sub_total + vat_amount;
+  const grand_total = sum_total + shipping_charge;
+  useEffect(() => {
+    if (error) {
+      alert(error);
+    }
+
+    if (isAuthenticated) {
+      dispatch(getCartItems(user._id));
+    }
+  }, [dispatch, error]);
+
+  const { formData, user_id } = route.params;
+
+  const paymentProcessHandler = () => {
+    navigation.navigate("PaymentDetails", {
+      sum_total,
+      shipping_charge,
+      formData,
+      user_id,
+      grand_total,
+    });
+  };
 
   return (
-    <View style={confirmOrderStyle.confirmOrderContainer}>
+    <ScrollView style={confirmOrderStyle.confirmOrderContainer}>
       {/*  ----------- TOP SECTION ----------- */}
 
       <View style={confirmOrderStyle.shippingTopContainer}>
@@ -69,16 +105,19 @@ const paymentProcessHandler =()=> {
           </Text>
 
           <View style={confirmOrderStyle.userDetailContainer}>
-            <Text>Name:</Text>
-            <Text>Demo User</Text>
+            <Text>Name: </Text>
+            <Text>{formData.email}</Text>
           </View>
           <View style={confirmOrderStyle.userDetailContainer}>
             <Text>Contact: </Text>
-            <Text>9876543210</Text>
+            <Text>{formData.contact}</Text>
           </View>
           <View style={confirmOrderStyle.userDetailContainer}>
-            <Text>Address:</Text>
-            <Text>kathmandu, kathmandu, BA, 44705, NP</Text>
+            <Text>Address: </Text>
+            <Text>
+              {formData.address}, {formData.province}, {formData.city},{" "}
+              {formData.zipCode}
+            </Text>
           </View>
         </View>
 
@@ -89,63 +128,81 @@ const paymentProcessHandler =()=> {
             Your Cart Items
           </Text>
 
-          <View style={confirmOrderStyle.itemsContainer}>
-            <View style={confirmOrderStyle.cartItems}>
-              <Image
-                source={require("../images/products/smartphones/Apple/iPhone-14-Pro-Max-black.jpg")}
-                style={confirmOrderStyle.cartImage}
-              />
-              <Text>1 x Nrs. 45000</Text>
-              <Text>Rs. 45000</Text>
-            </View>
-            <View style={confirmOrderStyle.cartItems}>
-              <Image
-                source={require("../images/products/smartphones/Apple/iPhone-14-Pro-Max-black.jpg")}
-                style={confirmOrderStyle.cartImage}
-              />
-              <Text>1 x Nrs. 45000</Text>
-              <Text>Rs. 45000</Text>
-            </View>
-          </View>
+          {loading ? (
+            <Loader />
+          ) : (
+            <>
+              {carts &&
+                carts.map((item, index) => (
+                  <View key={index} style={confirmOrderStyle.itemsContainer}>
+                    <View style={confirmOrderStyle.cartItems}>
+                      <Image
+                        source={{ uri: item.product.image }}
+                        style={confirmOrderStyle.cartImage}
+                      />
+                      <Text>
+                        {item.quantity}x Nrs. {item.product.price}
+                      </Text>
+                      <Text>Nrs. {item.quantity * item.product.price}</Text>
+                    </View>
+                  </View>
+                ))}
+            </>
+          )}
         </View>
 
         {/* -----------ORDER SUMMARY  ----------- */}
 
-        <View style={confirmOrderStyle.orderSummaryContainer}>
-          <Text style={confirmOrderStyle.shippingDetailHeading}>
-            Order Summary
-          </Text>
+        {loading ? (
+          <Loader />
+        ) : (
+          <View style={confirmOrderStyle.orderSummaryContainer}>
+            <Text style={confirmOrderStyle.shippingDetailHeading}>
+              Order Summary
+            </Text>
 
-          <View style={confirmOrderStyle.orderDetails}>
-            <Text>Subtotal </Text>
-            <Text>Nrs. 525477.87</Text>
-          </View>
-          <View style={confirmOrderStyle.orderDetails}>
-            <Text>13% VAT </Text>
-            <Text>Nrs. 68312.12</Text>
-          </View>
-          <View style={confirmOrderStyle.orderDetails}>
-            <Text>Shipping Charges </Text>
-            <Text>Nrs. 0</Text>
-          </View>
+            <View style={confirmOrderStyle.orderDetails}>
+              <Text>Subtotal </Text>
+              <Text>Nrs. {sub_total.toFixed(2)}</Text>
+            </View>
+            <View style={confirmOrderStyle.orderDetails}>
+              <Text>13% VAT </Text>
+              <Text>Nrs. {vat_amount.toFixed(2)}</Text>
+            </View>
+            <View style={confirmOrderStyle.orderDetails}>
+              <Text>Shipping Charges </Text>
+              <Text>Nrs. {shipping_charge.toFixed(2)}</Text>
+            </View>
 
-          <View style={{ paddingHorizontal: 15 }}>
-            <View style={confirmOrderStyle.totalHrLine}></View>
-          </View>
+            <View style={{ paddingHorizontal: 15 }}>
+              <View style={confirmOrderStyle.totalHrLine}></View>
+            </View>
 
-          <View style={confirmOrderStyle.orderDetails}>
-            <Text style={confirmOrderStyle.totalText}>Total </Text>
-            <Text style={confirmOrderStyle.totalText}>Nrs. 593990</Text>
+            <View style={confirmOrderStyle.orderDetails}>
+              <Text style={confirmOrderStyle.totalText}>Grand Total</Text>
+              <Text style={confirmOrderStyle.totalText}>
+                Nrs. {grand_total}
+              </Text>
+            </View>
           </View>
-        </View>
+        )}
 
-        <View style={{ alignItems: "center", marginVertical: 10 }}>
-          <Button onPress={paymentProcessHandler} style={confirmOrderStyle.continueBtn}>
+        <View
+          style={{
+            alignItems: "center",
+            marginVertical: 10,
+            marginBottom: 50,
+          }}
+        >
+          <Button
+            onPress={paymentProcessHandler}
+            style={confirmOrderStyle.continueBtn}
+          >
             <Text style={confirmOrderStyle.continueTxt}>Proceed To Pay</Text>
           </Button>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
@@ -156,7 +213,7 @@ const confirmOrderStyle = StyleSheet.create({
     backgroundColor: "#FFF",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    paddingBottom: 100,
+    // paddingBottom: 100,
   },
 
   shippingTopContainer: {

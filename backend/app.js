@@ -8,7 +8,8 @@ import user from "./routes/User.js";
 import product from "./routes/Product.js";
 import order from "./routes/Order.js";
 import payment from "./routes/Payment.js";
-
+import cart from "./routes/Cart.js";
+import shipping from "./routes/Shipping.js";
 const app = express();
 
 // dotenv configuration
@@ -29,6 +30,7 @@ app.use(
   cors({
     origin: true,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.get("/", (req, res) => {
@@ -43,5 +45,7 @@ app.use("/api/v1", user);
 app.use("/api/v1", product);
 app.use("/api/v1", order);
 app.use("/api/v1", payment);
+app.use("/api/v1", cart);
+app.use("/api/v1", shipping);
 
 export default app;

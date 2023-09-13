@@ -15,9 +15,13 @@ import PaymentDetails from "./Screens/PaymentDetails";
 import UpdateProfile from "./Screens/UpdateProfile";
 import ChangePassword from "./Screens/ChangePassword";
 import Messages from "./Screens/Messages";
+import MyOrders from "./Screens/MyOrders";
+import Wishlist from "./Screens/Wishlist";
+import { useSelector } from "react-redux";
 
 const Main = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
+  const { isAuthenticated } = useSelector((state) => state.auth);
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -78,14 +82,23 @@ const Main = ({ navigation }) => {
           component={ProductDetail}
         />
 
-        {/* ----------- ORDER  ----------- */}
-
-        {/* ----------- CART  ----------- */}
-
+        {/* ----------- ORDER / CART / WISHLIST   ----------- */}
         <Stack.Screen
           name="Cart"
           options={{ headerShown: false }}
           component={Cart}
+        />
+
+        <Stack.Screen
+          name="MyOrders"
+          options={{ headerShown: false }}
+          component={MyOrders}
+        />
+
+        <Stack.Screen
+          name="Wishlist"
+          options={{ headerShown: false }}
+          component={Wishlist}
         />
 
         {/* ----------- PAYMENT  ----------- */}

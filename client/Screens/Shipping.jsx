@@ -6,18 +6,35 @@ import {
   Image,
   TextInput,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import ShippingTruck from "react-native-vector-icons/MaterialCommunityIcons";
 import CheckCircle from "react-native-vector-icons/MaterialCommunityIcons";
 import Payment from "react-native-vector-icons/MaterialIcons";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
-const Shipping = () => {
+const Shipping = ({ nav, route }) => {
+  const { user_id } = route.params;
   const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
+  const [address, setAddress] = useState("");
+  const [province, setProvince] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+
   const continueBtnHandler = () => {
-    navigation.navigate("ConfirmOrder");
+    const formData = {
+      email,
+      contact,
+      address,
+      province,
+      city,
+      zipCode,
+    };
+    navigation.navigate("ConfirmOrder", { formData, user_id });
   };
+
   return (
     <View style={shippingStyle.shippingContainer}>
       <View style={shippingStyle.shippingTopContainer}>
@@ -58,12 +75,44 @@ const Shipping = () => {
         </Text>
 
         <View style={shippingStyle.formContainer}>
-          <TextInput style={shippingStyle.input} placeholder="Email" />
-          <TextInput style={shippingStyle.input} placeholder="Contact" />
-          <TextInput style={shippingStyle.input} placeholder="Address" />
-          <TextInput style={shippingStyle.input} placeholder="Province" />
-          <TextInput style={shippingStyle.input} placeholder="City" />
-          <TextInput style={shippingStyle.input} placeholder="Zip Code" />
+          <TextInput
+            style={shippingStyle.input}
+            inputMode="email"
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={shippingStyle.input}
+            inputMode="tel"
+            placeholder="Contact"
+            value={contact}
+            onChangeText={setContact}
+          />
+          <TextInput
+            style={shippingStyle.input}
+            placeholder="Address"
+            value={address}
+            onChangeText={setAddress}
+          />
+          <TextInput
+            style={shippingStyle.input}
+            placeholder="Province"
+            value={province}
+            onChangeText={setProvince}
+          />
+          <TextInput
+            style={shippingStyle.input}
+            placeholder="City"
+            value={city}
+            onChangeText={setCity}
+          />
+          <TextInput
+            style={shippingStyle.input}
+            placeholder="Zip Code"
+            value={zipCode}
+            onChangeText={setZipCode}
+          />
 
           <Button
             onPress={continueBtnHandler}
@@ -84,7 +133,6 @@ const shippingStyle = StyleSheet.create({
     backgroundColor: "#FFF",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    paddingBottom: 100,
   },
 
   shippingTopContainer: {

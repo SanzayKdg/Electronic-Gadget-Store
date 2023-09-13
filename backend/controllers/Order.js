@@ -1,9 +1,22 @@
 import { Order } from "../models/Order.js";
 import { Product } from "../models/Product.js";
+import { sendMail } from "../utils/SendMail.js";
 
 // create a new order -- User
 export const newOrder = async (req, res, next) => {
   try {
+    function generateRandomId(length) {
+      const characters =
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+      }
+
+      return result;
+    }
+
     const {
       shippingInfo,
       orderItems,
@@ -12,19 +25,45 @@ export const newOrder = async (req, res, next) => {
       shippingPrice,
       totalPrice,
       contact,
+      user,
     } = req.body;
-
-    const order = await Order.create({
-      shippingInfo,
-      orderItems,
-      paymentInfo,
-      itemsPrice,
-      shippingPrice,
-      totalPrice,
-      contact,
-      paidAt: Date.now(),
-      user: req.user._id,
-    });
+    let order = {};
+    if (paymentInfo.method === "cash_on_delivery") {
+      paymentInfo.id = generateRandomId(8);
+      paymentInfo.method = "cash_on_delivery";
+      order = await Order.create({
+        shippingInfo,
+        orderItems,
+        paymentInfo,
+        itemsPrice,
+        shippingPrice,
+        totalPrice,
+        contact,
+        user,
+        paidAt: null,
+      });
+    }
+    if (paymentInfo.method === "card") {
+      paymentInfo.id = generateRandomId(8);
+      paymentInfo.method = "card";
+      paymentInfo.status = "completed";
+      order = await Order.create({
+        shippingInfo,
+        orderItems,
+        paymentInfo,
+        itemsPrice,
+        shippingPrice,
+        totalPrice,
+        contact,
+        user,
+        paidAt: Date.now(),
+      });
+    }
+    console.log(shippingInfo.email);
+    await sendMail(
+      shippingInfo.email,
+      `Your order was placed successfully. Your order id is ${order.id}. Do not share this id or lost it`
+    );
     res.status(201).json({
       success: true,
       order,

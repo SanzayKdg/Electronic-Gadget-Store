@@ -72,7 +72,6 @@ export const getProductDetails = async (req, res, next) => {
         res.status(404).json({ success: false, message: "Product Not Found" })
       );
     }
-    console.log("Maile yo res pathaye", product);
     res.status(200).json({
       success: true,
       product,

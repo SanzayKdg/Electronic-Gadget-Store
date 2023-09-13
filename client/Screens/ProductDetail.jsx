@@ -1,43 +1,78 @@
-import { View, Text, StyleSheet, StatusBar, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  StatusBar,
+  Image,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
 import Carousel from "./Carousel";
-import { images } from "./imagesLink";
+
 import { Rating } from "react-native-elements";
-import { Button } from "react-native-paper";
+import { Button, Dialog } from "react-native-paper";
 import Loader from "../Components/Loader";
 import axios from "axios";
 import { baseURL } from "../url";
+import { useDispatch, useSelector } from "react-redux";
+import { getSingleProduct } from "../features/productSlice";
+import { addToCart } from "../features/cartSlice";
 
-const ProductDetail = ({ route }) => {
+const ProductDetail = ({ navigation, route }) => {
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const openDialogHandler = () => {
+    setOpenDialog(!openDialog);
+  };
+
   const { id } = route.params;
-  let loading = true;
-  console.log("My product details", product);
-  console.log("My product Id :", id);
 
-  const [product, setProduct] = useState({});
+  const { loading, product, error } = useSelector((state) => state.product);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { success } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
   useEffect(() => {
-    async function getData(pid) {
-      const { data } = await axios.get(`${baseURL}/products/${pid}`);
-      setProduct(data.product);
-      console.log(data, "Dat ais ");
+    if (error) {
+      alert("Some error occured. Please try again.");
     }
 
-    getData(id);
-    loading = false;
-  }, [id, loading]);
+    dispatch(getSingleProduct(id));
+  }, [dispatch, id]);
+
+  const addToCartHandler = () => {
+    const cartItem = {
+      name: product.name,
+      image: product.images[0].url,
+      quantity: 1,
+      product: id,
+      price: product.price,
+      user: user._id,
+    };
+
+    if (!isAuthenticated) {
+      alert("Please login first");
+      navigation.navigate("Login");
+    }
+    dispatch(addToCart(cartItem));
+
+    if (success) {
+      alert("Successfully added to cart");
+    }
+  };
 
   return (
     <View style={productStyle.productContainer}>
-      {loading && product == undefined ? (
+      {loading ? (
         <Loader />
       ) : (
         <View>
           <Header />
           <ScrollView style={productStyle.productDetailContainer}>
-            <View style={productStyle.carouselView}>
-              <Carousel images={images} />
-            </View>
+            {/* <View style={productStyle.carouselView}><Carousel /></View> */}
 
             <View style={productStyle.productDescContainer}>
               <View style={productStyle.productDescSection1}>
@@ -70,10 +105,46 @@ const ProductDetail = ({ route }) => {
                 <Text style={productStyle.productDescription}>
                   {product.description}
                 </Text>
+
+                <Button
+                  onPress={openDialogHandler}
+                  style={productStyle.reviewBtn}
+                >
+                  <Text style={productStyle.reviewBtnTxt}>Submit Review</Text>
+                </Button>
               </View>
             </View>
 
-            <Button style={productStyle.addToCartBtn}>
+            <Dialog visible={openDialog} onDismiss={openDialogHandler}>
+              <Dialog.Title>Submit Review</Dialog.Title>
+              <Dialog.Content>
+                <TextInput
+                  style={productStyle.input}
+                  placeholder="Comment"
+                  // value={description}
+                  // onChangeText={setDescription}
+                />
+
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <TouchableOpacity onPress={openDialogHandler}>
+                    <Text>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <Button
+                    // disabled={!title || !description}
+                    // onPress={submitReviewHandler}
+                    textColor="#900"
+                  >
+                    Add
+                  </Button>
+                </View>
+              </Dialog.Content>
+            </Dialog>
+
+            <Button
+              onPress={addToCartHandler}
+              style={productStyle.addToCartBtn}
+            >
               <Text style={productStyle.addToCartBtnTxt}>Add to Cart</Text>
             </Button>
           </ScrollView>
@@ -90,12 +161,10 @@ const productStyle = StyleSheet.create({
     backgroundColor: "#AAA1",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
-    paddingBottom: 100,
   },
 
   productDetailContainer: {
     marginTop: 10,
-    // borderWidth: 2,
     padding: 5,
   },
   carouselView: {
@@ -122,9 +191,19 @@ const productStyle = StyleSheet.create({
     marginBottom: 15,
   },
   productDescSection4: {
-    flexDirection: "row",
     marginBottom: 15,
   },
+
+  reviewBtn: {
+    marginTop: 15,
+    backgroundColor: "#FF6347",
+    width: "30%",
+  },
+  reviewBtnTxt: {
+    fontSize: 10,
+    color: "#FFF",
+  },
+
   productName: {
     marginRight: 10,
     fontSize: 16,
@@ -163,5 +242,16 @@ const productStyle = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
   },
+  input: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#b5b5b5",
+    padding: 10,
+    paddingLeft: 15,
+    borderRadius: 5,
+    marginVertical: 15,
+    fontSize: 15,
+  },
+  productImage: {},
 });
 // info.gasgroup@gmail.com

@@ -9,21 +9,16 @@ import {
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors } from "../Redux/User/login";
-import { loginAction } from "../Redux/Action";
-import axios from "axios";
-import { baseURL } from "../url";
+import { loginAsync } from "../features/authSlice";
 
 const Login = ({ navigation }) => {
-  const { loading, error, isAuthenticated, user } = useSelector(
-    (state) => state.login
-  );
+  const { isAuthenticated, error } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const loginHandler = () => {
-    dispatch(loginAction(email, password));
+    dispatch(loginAsync({ email, password }));
   };
 
   useEffect(() => {
@@ -32,21 +27,10 @@ const Login = ({ navigation }) => {
       dispatch(clearErrors());
     }
     if (isAuthenticated) {
-      navigation.navigate("Account", { isAuthenticated: isAuthenticated });
+      navigation.navigate("Account");
     }
-  }, [alert, error, dispatch, navigation, isAuthenticated]);
+  }, [error, dispatch, navigation, isAuthenticated]);
 
-  // const loginHandler = async () => {
-  //   const { data } = await axios.post(
-  //     `${baseURL}/login`,
-  //     { email, password },
-  //     { headers: { "Content-Type": "application/json" }, withCredentials: true }
-  //   );
-  //   console.log(data.user, "is in login");
-  //   if (data) {
-  //     navigation.navigate("Account", { data: data });
-  //   }
-  // };
   return (
     <View style={loginStyle.loginContainer}>
       <View style={{ width: "70%" }}>

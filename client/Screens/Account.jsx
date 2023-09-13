@@ -16,87 +16,48 @@ import Cart from "react-native-vector-icons/FontAwesome";
 import Wishlist from "react-native-vector-icons/AntDesign";
 import Message from "react-native-vector-icons/MaterialCommunityIcons";
 import Loader from "../Components/Loader";
-import axios from "axios";
-import { baseURL } from "../url";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors } from "../Redux/User/profile";
-import { profileAction } from "../Redux/Action";
+import { logoutAsync } from "../features/authSlice";
 
-const Account = ({ navigation, route }) => {
-  // const [user, setUser] = useState({});
-  const logoutHandler = async () => {
-    await axios.get(`${baseURL}/logout`, { withCredentials: true });
-    setUser(null);
-    navigation.navigate("Login");
-  };
-
-  // useEffect(() => {
-  //   console.log("useEfect ma xiryo");
-  //   async function getUser() {
-  //     console.log("funciton ma xiryo");
-  //     const { data } = await axios.get(`${baseURL}/profile`, {
-  //       withCredentials: true,
-  //     });
-  //     console.log("this is from account.jsx", data);
-  //     setUser(data.user);
-  //   }
-  //   // loading = false;
-  //   // getUser();
-  // }, [route]);
-
+const Account = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { user, loading, error } = useSelector((state) => state.profile);
-  console.log(user, "Account ma aayo");
-  const loadUser = async () => {
-    await dispatch(profileAction());
-  };
-  useEffect(() => {
-    console.log("UseEffect ma aayo");
+  const { user, loading, error, isAuthenticated } = useSelector(
+    (state) => state.auth
+  );
 
+  // ----------- LOAD USER --------------
+
+  useEffect(() => {
     if (error) {
-      dispatch(clearErrors());
       alert(error);
     }
-    loadUser();
-  }, [dispatch, error, user]);
+  }, [error]);
 
+  // ----------- LOGOUT --------------
+  const logoutHandler = () => {
+    dispatch(logoutAsync());
+    navigation.navigate("Login");
+  };
   return loading ? (
     <Loader />
   ) : (
     <View style={accountStyle.accountContainer}>
       <SafeAreaView>
-        {user === null && user === undefined ? (
-          <View style={accountStyle.isNotAuthenticatedContainer}>
-            <Text style={accountStyle.isNotAuthenticatedText}>
-              Welcome, to GadgetBiz
-            </Text>
-
-            <Button
-              onPress={() => navigation.navigate("Login")}
-              style={accountStyle.loginBtn}
-              textColor="#FF6347"
-            >
-              <Text style={accountStyle.loginTxt}>Login/Sign Up</Text>
-            </Button>
-
-            <Text style={accountStyle.aboutUsText}>
-              GadgetBiz is a portal that allows the seller to advertise their
-              products on the internet. It can be conducted on any device like
-              computers, smartphones, tablets, or any other smart devices.
-            </Text>
-          </View>
-        ) : (
+        {isAuthenticated ? (
           <View style={accountStyle.userSection}>
             <View style={accountStyle.topSection}>
               <View style={accountStyle.userDescContainer}>
                 <Image
                   style={accountStyle.userImage}
-                  source={{ uri: "user.avatar.url ? user.avatar.url : null" }}
+                  source={{ uri: user.avatar.url ? user.avatar.url : null }}
                 />
                 <View style={accountStyle.userDesc}>
                   <Text style={accountStyle.textItemHead}>{user.name}</Text>
                   <Text style={accountStyle.textItems}>{user.email}</Text>
                   <Text style={accountStyle.textItems}>{user.contact}</Text>
+                  <Text style={accountStyle.textItems1}>
+                    User Since: {user.createdAt}
+                  </Text>
                 </View>
               </View>
 
@@ -152,6 +113,26 @@ const Account = ({ navigation, route }) => {
                 <Text style={accountStyle.accountBtnTxt}>Change Password</Text>
               </Button>
             </View>
+          </View>
+        ) : (
+          <View style={accountStyle.isNotAuthenticatedContainer}>
+            <Text style={accountStyle.isNotAuthenticatedText}>
+              Welcome, to GadgetBiz
+            </Text>
+
+            <Button
+              onPress={() => navigation.navigate("Login")}
+              style={accountStyle.loginBtn}
+              textColor="#FF6347"
+            >
+              <Text style={accountStyle.loginTxt}>Login/Sign Up</Text>
+            </Button>
+
+            <Text style={accountStyle.aboutUsText}>
+              GadgetBiz is a portal that allows the seller to advertise their
+              products on the internet. It can be conducted on any device like
+              computers, smartphones, tablets, or any other smart devices.
+            </Text>
           </View>
         )}
       </SafeAreaView>
@@ -238,6 +219,11 @@ const accountStyle = StyleSheet.create({
   textItems: {
     color: "#808080",
     marginVertical: 5,
+  },
+
+  textItems1: {
+    marginVertical: 5,
+    color: "#14A44D",
   },
   textItemHead: {
     fontWeight: 700,

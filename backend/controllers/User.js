@@ -102,7 +102,6 @@ export const loginUser = async (req, res, next) => {
         res.status(401).json({ success: false, message: "Invalid credentials" })
       );
     }
-    console.log(user);
 
     sendToken(user, 200, res, "Login Success");
   } catch (error) {
@@ -124,22 +123,6 @@ export const logout = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Logged out successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-// get profile details
-export const getProfile = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user._id);
-    res.status(200).json({
-      success: true,
-      user,
     });
   } catch (error) {
     res.status(500).json({
