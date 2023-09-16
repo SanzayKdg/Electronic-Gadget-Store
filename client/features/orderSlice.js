@@ -4,10 +4,13 @@ import { api, api1 } from "./api/api";
 // ----------- ACTION STARTS HERE --------------
 
 // ----------- CREATE ORDER --------------
-export const createOrder = createAsyncThunk("order/new", async (orderItems) => {
-  const response = await api1.post("/order/new", orderItems);
-  return response.data;
-});
+export const createOrder = createAsyncThunk(
+  "order/new_order",
+  async (orderItems) => {
+    const response = await api1.post("/order/new", orderItems);
+    return response.data;
+  }
+);
 
 // ----------- ACTION ENDS HERE --------------
 
@@ -19,19 +22,19 @@ export const orderSlice = createSlice({
     loading: false,
     order: {},
     error: null,
-    success: false,
+    success: null,
   },
 
   extraReducers: (builder) => {
     builder
-      // ----------- GET ALL CART ITEMS --------------
+      // ----------- CREATE ORDER --------------
       .addCase(createOrder.pending, (state) => {
         state.loading = true;
       })
       .addCase(createOrder.fulfilled, (state, action) => {
+        state.success = action.payload.success;
         state.loading = false;
         state.order = action.payload.order;
-        state.success = true;
       })
       .addCase(createOrder.rejected, (state, action) => {
         state.loading = false;

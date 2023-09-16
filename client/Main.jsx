@@ -18,6 +18,7 @@ import Messages from "./Screens/Messages";
 import MyOrders from "./Screens/MyOrders";
 import Wishlist from "./Screens/Wishlist";
 import { useSelector } from "react-redux";
+import CameraComponent from "./Screens/CameraComponent";
 
 const Main = ({ navigation }) => {
   const Stack = createNativeStackNavigator();
@@ -45,7 +46,11 @@ const Main = ({ navigation }) => {
           options={{ headerShown: false }}
           component={Register}
         />
-
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Camera"
+          component={CameraComponent}
+        />
         {/* ----------- PROFILE  ----------- */}
 
         <Stack.Screen

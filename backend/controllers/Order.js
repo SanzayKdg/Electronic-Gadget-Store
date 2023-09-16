@@ -59,7 +59,6 @@ export const newOrder = async (req, res, next) => {
         paidAt: Date.now(),
       });
     }
-    console.log(shippingInfo.email);
     await sendMail(
       shippingInfo.email,
       `Your order was placed successfully. Your order id is ${order.id}. Do not share this id or lost it`

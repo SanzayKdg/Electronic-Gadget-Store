@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  StatusBar,
+  StatusBar, Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";

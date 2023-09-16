@@ -3,6 +3,15 @@ import { api } from "./api/api";
 
 // ----------- ACTION STARTS HERE --------------
 
+// register action
+export const registerAsync = createAsyncThunk(
+  "auth/register",
+  async (formData) => {
+    const response = await api.post("/register", formData);
+    return response.data;
+  }
+);
+
 // login action
 export const loginAsync = createAsyncThunk(
   "auth/login",
@@ -33,6 +42,21 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // ----------- REGISTER --------------
+      .addCase(registerAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(registerAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.success = action.payload.success;
+        state.message = action.payload.message;
+      })
+      .addCase(registerAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // ----------- LOGIN --------------
       .addCase(loginAsync.pending, (state) => {
         state.loading = true;
       })
@@ -46,6 +70,8 @@ export const authSlice = createSlice({
         state.user = null;
         state.error = action.payload;
       })
+
+      // ----------- LOGOUT --------------
       .addCase(logoutAsync.pending, (state) => {
         state.loading = true;
         state.isAuthenticated = true;

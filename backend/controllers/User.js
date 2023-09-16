@@ -3,21 +3,35 @@ import { sendMail } from "../utils/SendMail.js";
 import sendToken from "../utils/SendToken.js";
 import cloudinary from "cloudinary";
 import crypto from "crypto";
-
+import fs from "fs";
 // Create a new user
 export const registerUser = async (req, res, next) => {
   try {
+    const { name, email, password, contact } = req.body;
+    const avatar = req.files.avatar.tempFilePath;
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
+    }
+
     // cloudinary file upload
-    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
       folder: "avatar",
       width: 150,
       crop: "scale",
     });
+
+    // delete tmp folder and files
+    fs.rmSync("./tmp", { recursive: true });
+
     // create a otp
 
-    const { name, email, password, contact } = req.body;
     const otp = Math.floor(Math.random() * 1000000).toString();
-    const user = await User.create({
+    user = await User.create({
       name,
       email,
       password,
@@ -40,7 +54,10 @@ export const registerUser = async (req, res, next) => {
       res,
       "Account Created Successfully. Please verify your account with the OTP sent in your email."
     );
+
+    console.log(user, "from frontend");
   } catch (error) {
+    console.log(error, "error is here");
     res.status(500).json({
       success: false,
       message: error.message,

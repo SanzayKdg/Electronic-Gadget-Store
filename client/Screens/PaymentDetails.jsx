@@ -17,7 +17,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { createOrder } from "../features/orderSlice";
 import { useNavigation } from "@react-navigation/native";
 import { deleteAllCartItem } from "../features/cartSlice";
+import Loader from "../Components/Loader";
 const PaymentDetails = ({ nav, route }) => {
+  const [orderPlaced, setOrderPlaced] = useState(false);
   const { sum_total, shipping_charge, formData, user_id, grand_total } =
     route.params;
   const [paymentType, setPaymentType] = useState("cash_on_delivery");
@@ -25,9 +27,7 @@ const PaymentDetails = ({ nav, route }) => {
   const [expDate, setExpDate] = useState("");
   const [cvc, setCvc] = useState("");
   const dispatch = useDispatch();
-  const { loading, order, success, error } = useSelector(
-    (state) => state.order
-  );
+  const { loading, success, error } = useSelector((state) => state.order);
   const { carts } = useSelector((state) => state.cart);
   const navigation = useNavigation();
   const formattedDate = (e) => {
@@ -39,7 +39,7 @@ const PaymentDetails = ({ nav, route }) => {
     const formattedDate = `${date.slice(0, 2)} / ${date.slice(2, 7)}`;
     setExpDate(formattedDate);
   };
-  const paymentHandler = async () => {
+  const paymentHandler = () => {
     const extractedData = carts.map((cart) => ({
       name: cart.product.name,
       quantity: cart.quantity,
@@ -60,130 +60,153 @@ const PaymentDetails = ({ nav, route }) => {
         totalPrice: grand_total,
       };
       dispatch(createOrder(order));
-      alert("Order placed successfully.");
+      // alert("Order placed successfully.");
     } else if (paymentType === "card") {
       alert("Card");
     }
-    await navigation.navigate("MyOrders");
-    // await dispatch(deleteAllCartItem(user_id)); remaining
+    setOrderPlaced(true);
   };
+
+  useEffect(() => {
+    if (success && orderPlaced === true) {
+      alert("Order placed successfully");
+      navigation.navigate("MyOrders");
+      dispatch(deleteAllCartItem(user_id));
+      setOrderPlaced(false);
+    }
+    if (error) {
+      alert(error);
+    }
+  }, [success, error, navigation, dispatch, orderPlaced]);
 
   return (
     <ScrollView style={paymentStyle.paymentContainer}>
-      {/* ----------- TOP CONTAINER  ----------- */}
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          {/* ----------- TOP CONTAINER  ----------- */}
 
-      <View style={paymentStyle.shippingTopContainer}>
-        <View style={paymentStyle.shippingIconContainer}>
-          <ShippingTruck
-            name="truck-fast"
-            size={35}
-            style={paymentStyle.shippingIcons}
-          />
+          <View style={paymentStyle.shippingTopContainer}>
+            <View style={paymentStyle.shippingIconContainer}>
+              <ShippingTruck
+                name="truck-fast"
+                size={35}
+                style={paymentStyle.shippingIcons}
+              />
 
-          <View style={paymentStyle.shippingHrLine}></View>
-          <CheckCircle
-            name="check-circle"
-            size={35}
-            style={paymentStyle.shippingIcons}
-          />
-          <View style={paymentStyle.shippingHrLine}></View>
-          <Payment
-            name="payment"
-            size={35}
-            style={paymentStyle.shippingIcons}
-          />
-        </View>
-        <View style={paymentStyle.shippingIconTextContainer}>
-          <Text style={paymentStyle.shippingIconText}>Shipping Details</Text>
-          <View style={paymentStyle.shippingTextLine}></View>
-
-          <Text style={paymentStyle.shippingIconText}>Confirm Order</Text>
-          <View style={paymentStyle.shippingTextLine}></View>
-
-          <Text style={paymentStyle.shippingIconText}>Payment Details</Text>
-        </View>
-      </View>
-
-      {/* ----------- MID CONTAINER  ----------- */}
-
-      <View style={paymentStyle.bottomContainer}>
-        <Text style={paymentStyle.shippingDetailHeading}>Payment Details</Text>
-
-        {/* ----------- SELECT PAYMENT TYPE----------- */}
-        <View style={paymentStyle.paymentType}>
-          <Text style={paymentStyle.paymentTypeTxt}>Select Payment Type</Text>
-          <RadioButton.Group
-            value={paymentType}
-            onValueChange={(e) => setPaymentType(e)}
-          >
-            <View style={paymentStyle.paymentMethod}>
-              <Text>Cash On Delivery</Text>
-              <RadioButton value="cash_on_delivery" />
+              <View style={paymentStyle.shippingHrLine}></View>
+              <CheckCircle
+                name="check-circle"
+                size={35}
+                style={paymentStyle.shippingIcons}
+              />
+              <View style={paymentStyle.shippingHrLine}></View>
+              <Payment
+                name="payment"
+                size={35}
+                style={paymentStyle.shippingIcons}
+              />
             </View>
-            <View style={paymentStyle.paymentMethod}>
-              <Text>Debit / Credit Card</Text>
-              <RadioButton value="card" />
+            <View style={paymentStyle.shippingIconTextContainer}>
+              <Text style={paymentStyle.shippingIconText}>
+                Shipping Details
+              </Text>
+              <View style={paymentStyle.shippingTextLine}></View>
+
+              <Text style={paymentStyle.shippingIconText}>Confirm Order</Text>
+              <View style={paymentStyle.shippingTextLine}></View>
+
+              <Text style={paymentStyle.shippingIconText}>Payment Details</Text>
             </View>
-          </RadioButton.Group>
-        </View>
+          </View>
 
-        {/* ----------- FORM CONTAINER  ----------- */}
-        <View style={paymentStyle.formContainer}>
-          {paymentType === "card" ? (
-            <>
-              <View style={paymentStyle.formItem}>
-                <Text style={paymentStyle.formLabel}>Card Number</Text>
-                <TextInput
-                  style={paymentStyle.input}
-                  placeholder="1234 1234 1234 1234"
-                  inputMode="decimal"
-                  value={cardNumber}
-                  maxLength={16}
-                  minLength={16}
-                  onChangeText={setCardNumber}
-                />
-              </View>
-              <View style={paymentStyle.formItem}>
-                <Text style={paymentStyle.formLabel}>Expiry Date</Text>
-                <TextInput
-                  style={paymentStyle.input}
-                  placeholder="MM / YY"
-                  inputMode="decimal"
-                  value={expDate}
-                  maxLength={7}
-                  minLength={7}
-                  onChangeText={formattedDate}
-                />
-              </View>
-              <View style={paymentStyle.formItem}>
-                <Text style={paymentStyle.formLabel}>CVC</Text>
-                <TextInput
-                  style={paymentStyle.input}
-                  placeholder="123"
-                  inputMode="decimal"
-                  maxLength={3}
-                  value={cvc}
-                  onChangeText={setCvc}
-                />
-              </View>
-            </>
-          ) : (
-            <></>
-          )}
+          {/* ----------- MID CONTAINER  ----------- */}
 
-          <Button
-            onPress={paymentHandler}
-            disabled={loading ? true : false}
-            style={paymentStyle.continueBtn}
-          >
-            <Text style={paymentStyle.continueTxt}>
-              {paymentType === "card"
-                ? "Pay Nrs. " + grand_total
-                : "Place Order"}
+          <View style={paymentStyle.bottomContainer}>
+            <Text style={paymentStyle.shippingDetailHeading}>
+              Payment Details
             </Text>
-          </Button>
-        </View>
-      </View>
+
+            {/* ----------- SELECT PAYMENT TYPE----------- */}
+            <View style={paymentStyle.paymentType}>
+              <Text style={paymentStyle.paymentTypeTxt}>
+                Select Payment Type
+              </Text>
+              <RadioButton.Group
+                value={paymentType}
+                onValueChange={(e) => setPaymentType(e)}
+              >
+                <View style={paymentStyle.paymentMethod}>
+                  <Text>Cash On Delivery</Text>
+                  <RadioButton value="cash_on_delivery" />
+                </View>
+                <View style={paymentStyle.paymentMethod}>
+                  <Text>Debit / Credit Card</Text>
+                  <RadioButton value="card" />
+                </View>
+              </RadioButton.Group>
+            </View>
+
+            {/* ----------- FORM CONTAINER  ----------- */}
+            <View style={paymentStyle.formContainer}>
+              {paymentType === "card" ? (
+                <>
+                  <View style={paymentStyle.formItem}>
+                    <Text style={paymentStyle.formLabel}>Card Number</Text>
+                    <TextInput
+                      style={paymentStyle.input}
+                      placeholder="1234 1234 1234 1234"
+                      inputMode="decimal"
+                      value={cardNumber}
+                      maxLength={16}
+                      minLength={16}
+                      onChangeText={setCardNumber}
+                    />
+                  </View>
+                  <View style={paymentStyle.formItem}>
+                    <Text style={paymentStyle.formLabel}>Expiry Date</Text>
+                    <TextInput
+                      style={paymentStyle.input}
+                      placeholder="MM / YY"
+                      inputMode="decimal"
+                      value={expDate}
+                      maxLength={7}
+                      minLength={7}
+                      onChangeText={formattedDate}
+                    />
+                  </View>
+                  <View style={paymentStyle.formItem}>
+                    <Text style={paymentStyle.formLabel}>CVC</Text>
+                    <TextInput
+                      style={paymentStyle.input}
+                      placeholder="123"
+                      inputMode="decimal"
+                      maxLength={3}
+                      value={cvc}
+                      onChangeText={setCvc}
+                    />
+                  </View>
+                </>
+              ) : (
+                <></>
+              )}
+
+              <Button
+                onPress={paymentHandler}
+                disabled={loading ? true : false}
+                style={paymentStyle.continueBtn}
+              >
+                <Text style={paymentStyle.continueTxt}>
+                  {paymentType === "card"
+                    ? "Pay Nrs. " + grand_total
+                    : "Place Order"}
+                </Text>
+              </Button>
+            </View>
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 };
