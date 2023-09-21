@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
-  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
@@ -31,9 +30,8 @@ const Login = ({ navigation }) => {
     }
     if (isAuthenticated) {
       navigation.navigate("Account");
-      ToastAndroid.show(message, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
     }
-  }, [error, dispatch, navigation, isAuthenticated, ToastAndroid]);
+  }, [error, dispatch, navigation, isAuthenticated]);
 
   return (
     <View style={loginStyle.loginContainer}>
@@ -43,6 +41,7 @@ const Login = ({ navigation }) => {
           placeholder="Email"
           value={email}
           onChangeText={setEmail}
+          inputMode="email"
         />
         <TextInput
           secureTextEntry
@@ -50,6 +49,7 @@ const Login = ({ navigation }) => {
           placeholder="Password"
           value={password}
           onChangeText={setPassword}
+          inputMode="text"
         />
       </View>
       <Button

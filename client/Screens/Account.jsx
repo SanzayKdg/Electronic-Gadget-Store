@@ -35,7 +35,6 @@ const Account = ({ navigation }) => {
     }
     if (isAuthenticated) {
       dispatch(getProfileAsync());
-      
     }
   }, [error, dispatch, isAuthenticated]);
 
@@ -121,12 +120,18 @@ const Account = ({ navigation }) => {
                   </View>
 
                   <View style={accountStyle.bottomSection}>
-                    <Button style={accountStyle.accountBtn}>
+                    <Button
+                      onPress={() => navigation.navigate("UpdateProfile")}
+                      style={accountStyle.accountBtn}
+                    >
                       <Text style={accountStyle.accountBtnTxt}>
                         Update Profile
                       </Text>
                     </Button>
-                    <Button style={accountStyle.accountBtn}>
+                    <Button
+                      onPress={() => navigation.navigate("ChangePassword")}
+                      style={accountStyle.accountBtn}
+                    >
                       <Text style={accountStyle.accountBtnTxt}>
                         Change Password
                       </Text>

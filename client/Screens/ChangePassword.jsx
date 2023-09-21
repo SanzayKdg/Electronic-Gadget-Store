@@ -6,40 +6,86 @@ import {
   TextInput,
   StatusBar,
   Platform,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { changePasswordAsync, getProfileAsync } from "../features/userSlice";
+import { useNavigation } from "@react-navigation/native";
+import { logoutAsync } from "../features/authSlice";
+
 const ChangePassword = () => {
+  const [passwordChanged, setPasswordChanged] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const { success, message, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const changePasswordHandler = async () => {
+    const formData = { newPassword, confirmPassword, oldPassword };
+    if (newPassword === "" || confirmPassword === "" || oldPassword === "") {
+      ToastAndroid.show(
+        "Please fill all the required fields.",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+    }
+    if (newPassword !== confirmPassword) {
+      ToastAndroid.show(
+        "Confirm password didn't matched",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+    }
+
+    dispatch(changePasswordAsync(formData));
+    setPasswordChanged(true);
+    dispatch(getProfileAsync());
+  };
+
+  useEffect(() => {
+    if (error) {
+      ToastAndroid.show(error, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+    }
+    if (success && passwordChanged === true) {
+      ToastAndroid.show(message, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+      navigation.navigate("Account");
+    }
+  }, [dispatch, success, passwordChanged, ToastAndroid, navigation]);
+
   return (
-    <View style={registerStyle.mainContainer}>
-      <Text style={registerStyle.changePasswordHeading}>Change Password</Text>
-      <View style={registerStyle.registerContainer}>
+    <View style={changePasswordStyle.mainContainer}>
+      <Text style={changePasswordStyle.changePasswordHeading}>
+        Change Password
+      </Text>
+      <View style={changePasswordStyle.changePasswordContainer}>
         <View style={{ width: "70%" }}>
           <TextInput
-            style={registerStyle.input}
+            style={changePasswordStyle.input}
             placeholder="Old Password"
-            //   value={name}
-            //   onChangeText={setName}
+            value={oldPassword}
+            onChangeText={setOldPassword}
+            secureTextEntry={true}
           />
           <TextInput
-            style={registerStyle.input}
+            style={changePasswordStyle.input}
             placeholder="New Password"
-            //   value={email}
-            //   onChangeText={setEmail}
+            value={newPassword}
+            onChangeText={setNewPassword}
+            secureTextEntry={true}
           />
           <TextInput
-            style={registerStyle.input}
+            style={changePasswordStyle.input}
             placeholder="Confirm Password"
-            //   value={password}
-            //   onChangeText={setPassword}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={true}
           />
         </View>
 
-        <Button
-          style={registerStyle.btn}
-          // onPress={registerHandler}
-          // disabled={!email || !password || !name}
-        >
+        <Button style={changePasswordStyle.btn} onPress={changePasswordHandler}>
           <Text style={{ color: "#fff" }}>Change Password</Text>
         </Button>
       </View>
@@ -49,13 +95,13 @@ const ChangePassword = () => {
 
 export default ChangePassword;
 
-const registerStyle = StyleSheet.create({
+const changePasswordStyle = StyleSheet.create({
   mainContainer: {
     backgroundColor: "#FFF",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
-  registerContainer: {
+  changePasswordContainer: {
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",

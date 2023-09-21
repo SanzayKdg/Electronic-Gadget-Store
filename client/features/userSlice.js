@@ -15,7 +15,15 @@ export const verifyAsync = createAsyncThunk("user/verify", async (otp) => {
 });
 
 // update profile action
-// update password action
+// change password action
+export const changePasswordAsync = createAsyncThunk(
+  "user/changePassword",
+  async (formData) => {
+    const response = await api.put("/password/update", formData);
+    return response.data;
+  }
+);
+
 // forgot password action
 
 // ----------- ACTION ENDS HERE --------------
@@ -62,11 +70,24 @@ export const userSlice = createSlice({
         state.loading = false;
         state.success = false;
         state.error = action.payload;
+      })
+      // ----------- UPDATE PROFILE --------------
+
+      // ----------- CHANGE PASSWORD --------------
+      .addCase(changePasswordAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(changePasswordAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+        state.success = true;
+      })
+      .addCase(changePasswordAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+    // ----------- FORGOT PASSWORD --------------
   },
 });
-// ----------- UPDATE PROFILE --------------
-// ----------- UPDATE PASSWORD --------------
-// ----------- FORGOT PASSWORD --------------
 
 export default userSlice.reducer;

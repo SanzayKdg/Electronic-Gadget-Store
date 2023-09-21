@@ -278,7 +278,7 @@ export const passwordRecovery = async (req, res, next) => {
 // update password
 export const updatePassword = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).select("password");
+    const user = await User.findById(req.user._id).select("password");
     const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
 
     if (!isPasswordMatched) {
