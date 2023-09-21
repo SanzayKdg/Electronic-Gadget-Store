@@ -13,14 +13,16 @@ import { Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { changePasswordAsync, getProfileAsync } from "../features/userSlice";
 import { useNavigation } from "@react-navigation/native";
-import { logoutAsync } from "../features/authSlice";
+import Loader from "../Components/Loader";
 
 const ChangePassword = () => {
   const [passwordChanged, setPasswordChanged] = useState(false);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { success, message, error } = useSelector((state) => state.user);
+  const { success, message, error, loading } = useSelector(
+    (state) => state.user
+  );
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const changePasswordHandler = async () => {
@@ -57,38 +59,47 @@ const ChangePassword = () => {
 
   return (
     <View style={changePasswordStyle.mainContainer}>
-      <Text style={changePasswordStyle.changePasswordHeading}>
-        Change Password
-      </Text>
-      <View style={changePasswordStyle.changePasswordContainer}>
-        <View style={{ width: "70%" }}>
-          <TextInput
-            style={changePasswordStyle.input}
-            placeholder="Old Password"
-            value={oldPassword}
-            onChangeText={setOldPassword}
-            secureTextEntry={true}
-          />
-          <TextInput
-            style={changePasswordStyle.input}
-            placeholder="New Password"
-            value={newPassword}
-            onChangeText={setNewPassword}
-            secureTextEntry={true}
-          />
-          <TextInput
-            style={changePasswordStyle.input}
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry={true}
-          />
-        </View>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <Text style={changePasswordStyle.changePasswordHeading}>
+            Change Password
+          </Text>
+          <View style={changePasswordStyle.changePasswordContainer}>
+            <View style={{ width: "70%" }}>
+              <TextInput
+                style={changePasswordStyle.input}
+                placeholder="Old Password"
+                value={oldPassword}
+                onChangeText={setOldPassword}
+                secureTextEntry={true}
+              />
+              <TextInput
+                style={changePasswordStyle.input}
+                placeholder="New Password"
+                value={newPassword}
+                onChangeText={setNewPassword}
+                secureTextEntry={true}
+              />
+              <TextInput
+                style={changePasswordStyle.input}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={true}
+              />
+            </View>
 
-        <Button style={changePasswordStyle.btn} onPress={changePasswordHandler}>
-          <Text style={{ color: "#fff" }}>Change Password</Text>
-        </Button>
-      </View>
+            <Button
+              style={changePasswordStyle.btn}
+              onPress={changePasswordHandler}
+            >
+              <Text style={{ color: "#fff" }}>Change Password</Text>
+            </Button>
+          </View>
+        </>
+      )}
     </View>
   );
 };

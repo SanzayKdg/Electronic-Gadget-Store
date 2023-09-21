@@ -6,73 +6,155 @@ import {
   TextInput,
   Platform,
   StatusBar,
+  ScrollView,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Avatar, Button } from "react-native-paper";
-const UpdateProfile = () => {
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import Loader from "../Components/Loader";
+import { getProfileAsync, updateProfileAsync } from "../features/userSlice";
+import mime from "mime";
+const UpdateProfile = ({ nav, route }) => {
+  const { user, loading, success, error, message } = useSelector(
+    (state) => state.user
+  );
+  const [formSent, setFormSent] = useState(false);
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [contact, setContact] = useState(user.contact.toString());
+  const [avatar, setAvatar] = useState(user.avatar.url);
+  const navigation = useNavigation();
+  const handleImage = () => {
+    navigation.navigate("Camera", { updateProfile: true });
+  };
+
+  useEffect(() => {
+    if (route.params) {
+      if (route.params.image) {
+        setAvatar(route.params.image);
+      }
+    }
+  }, [route]);
+
+  const dispatch = useDispatch();
+  const updateProfileHandler = async () => {
+    const myForm = new FormData();
+    myForm.append("name", name);
+    myForm.append("email", email);
+    myForm.append("contact", contact);
+    myForm.append("avatar", {
+      uri: avatar,
+      type: mime.getType(avatar),
+      name: avatar.split("/").pop(),
+    });
+
+    if (name === "" || email === "" || contact === "" || avatar === "") {
+      ToastAndroid.show(
+        "Please fill all required fields",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+    }
+    // const myForm = {
+    //   name,
+    //   email,
+    //   contact,
+    //   avatar: {
+    //     uri: avatar,
+    //     type: mime.getType(avatar),
+    //     name: avatar.split("/").pop(),
+    //   },
+    // };
+
+    dispatch(updateProfileAsync({ myForm }));
+    await dispatch(getProfileAsync());
+    setFormSent(true);
+  };
+
+  useEffect(() => {
+    if (success && formSent === true) {
+      ToastAndroid.show(message, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+      navigation.navigate("Account");
+      setFormSent(false);
+    }
+
+    if (error) {
+      ToastAndroid.show(error, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+    }
+  }, [success, formSent, message, error]);
+
   return (
-    <View style={registerStyle.mainContainer}>
-      <Text style={registerStyle.registerHeader}>Update Profile</Text>
-      <View style={registerStyle.registerContainer}>
-        <Avatar.Image
-          size={100}
-          // source={{ uri: avatar ? avatar : null }}
-          style={{ backgroundColor: "#FF6347" }}
-        />
+    <ScrollView style={updateProfileStyle.mainContainer}>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <Text style={updateProfileStyle.updateProfileHeader}>
+            Update Profile
+          </Text>
+          <View style={updateProfileStyle.updateProfileContainer}>
+            <Avatar.Image
+              size={100}
+              source={{ uri: avatar ? avatar : null }}
+              style={{ backgroundColor: "#FF6347" }}
+            />
 
-        <TouchableOpacity
-        //    onPress={handleImage}
-        >
-          <Text style={{ color: "#FF6347", marginTop: 10 }}>Change Photo</Text>
-        </TouchableOpacity>
+            <TouchableOpacity onPress={handleImage}>
+              <Text style={{ color: "#FF6347", marginTop: 10 }}>
+                Change Photo
+              </Text>
+            </TouchableOpacity>
 
-        <View style={{ width: "70%" }}>
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Name"
-            //   value={name}
-            //   onChangeText={setName}
-          />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Email"
-            //   value={email}
-            //   onChangeText={setEmail}
-          />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Password"
-            //   value={password}
-            //   onChangeText={setPassword}
-          />
-        </View>
+            <View style={{ width: "70%" }}>
+              <TextInput
+                style={updateProfileStyle.input}
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+              />
+              <TextInput
+                style={updateProfileStyle.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+              />
+              <TextInput
+                style={updateProfileStyle.input}
+                placeholder="Contact"
+                value={contact}
+                onChangeText={setContact}
+              />
+            </View>
 
-        <Button
-          style={registerStyle.btn}
-          // onPress={registerHandler}
-          // disabled={!email || !password || !name}
-        >
-          <Text style={{ color: "#fff" }}>Update</Text>
-        </Button>
-      </View>
-    </View>
+            <Button
+              style={updateProfileStyle.btn}
+              onPress={updateProfileHandler}
+            >
+              <Text style={{ color: "#fff" }}>Update</Text>
+            </Button>
+          </View>
+        </>
+      )}
+    </ScrollView>
   );
 };
 
 export default UpdateProfile;
 
-const registerStyle = StyleSheet.create({
+const updateProfileStyle = StyleSheet.create({
   mainContainer: {
     backgroundColor: "#FFF",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 
-  registerContainer: {
+  updateProfileContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
-  registerHeader: {
+  updateProfileHeader: {
     fontSize: 20,
     padding: 10,
     fontWeight: "600",

@@ -15,6 +15,14 @@ export const verifyAsync = createAsyncThunk("user/verify", async (otp) => {
 });
 
 // update profile action
+export const updateProfileAsync = createAsyncThunk(
+  "user/update-profile",
+  async (formData) => {
+    const response = await api2.put("/profile/update", formData);
+    return response.data;
+  }
+);
+
 // change password action
 export const changePasswordAsync = createAsyncThunk(
   "user/changePassword",
@@ -72,7 +80,18 @@ export const userSlice = createSlice({
         state.error = action.payload;
       })
       // ----------- UPDATE PROFILE --------------
-
+      .addCase(updateProfileAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateProfileAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+        state.success = true;
+      })
+      .addCase(updateProfileAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       // ----------- CHANGE PASSWORD --------------
       .addCase(changePasswordAsync.pending, (state) => {
         state.loading = true;

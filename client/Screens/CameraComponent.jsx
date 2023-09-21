@@ -39,7 +39,7 @@ const CameraComponent = ({ navigation, route }) => {
       alert("Please select a image.");
     }
     if (route.params.updateProfile) {
-      return navigation.navigate("Profile", { image: data.assets[0].uri });
+      return navigation.navigate("UpdateProfile", { image: data.assets[0].uri });
     } else {
       return navigation.navigate("Register", { image: data.assets[0].uri });
     }
@@ -47,7 +47,7 @@ const CameraComponent = ({ navigation, route }) => {
   const capturePicture = async () => {
     const data = await camera.takePictureAsync();
     if (route.params.updateProfile) {
-      return navigation.navigate("Profile", { image: data.assets[0].uri });
+      return navigation.navigate("UpdateProfile", { image: data.assets[0].uri });
     } else {
       return navigation.navigate("Register", { image: data.assets[0].uri });
     }

@@ -146,7 +146,6 @@ export const logout = async (req, res, next) => {
 export const myProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
-
     // sending token as response
     sendToken(user, 200, res, `Welcome ${user.name}`);
   } catch (error) {
@@ -303,34 +302,45 @@ export const updatePassword = async (req, res, next) => {
 // update user profile
 export const updateProfile = async (req, res, next) => {
   try {
-    const newUserData = {
-      name: req.body.name,
-      email: req.body.email,
-    };
+    const user = await User.findById(req.user.id);
+    const avatar = req.files.avatar.tempFilePath;
+    const { name, email, contact } = req.body;
 
-    if (req.body.avatar !== "") {
-      const user = await User.findById(req.user.id);
+    console.log(
+      "name",
+      name,
+      "email",
+      email,
+      "contact",
+      contact,
+      "from frontend"
+    );
+    console.log("avatar", avatar, "from frontend");
+
+    if (name && email && contact) {
+      user.name = name;
+      user.email = email;
+      user.contact = contact;
+    }
+
+    if (avatar) {
       const imageId = user.avatar.public_id;
-
       await cloudinary.v2.uploader.destroy(imageId);
 
-      const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-        folder: "avatars",
+      const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "avatar",
         width: 150,
         crop: "scale",
       });
-
-      newUserData.avatar = {
+      // delete tmp folder and files
+      fs.rmSync("./tmp", { recursive: true });
+      user.avatar = {
         public_id: myCloud.public_id,
         url: myCloud.secure_url,
       };
     }
 
-    const user = await User.findByIdAndUpdate(req.user.id, newUserData, {
-      new: true,
-      runValidators: true,
-      useFindAndModify: false,
-    });
+    await user.save();
 
     if (!user) {
       return next(

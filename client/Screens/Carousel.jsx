@@ -1,4 +1,4 @@
-import { View,StyleSheet, Dimensions, ScrollView, Image } from "react-native";
+import { View, StyleSheet, Dimensions, ScrollView, Image } from "react-native";
 import React from "react";
 const screenWidth = Dimensions.get("window").width;
 const height = screenWidth * 0.5;

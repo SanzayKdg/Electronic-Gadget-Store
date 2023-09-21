@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema({
   contact: {
     type: Number,
     required: [true, "Please enter a password"],
-    select: false,
     minlength: [10, "Contact must have 10 numbers"],
   },
   avatar: {

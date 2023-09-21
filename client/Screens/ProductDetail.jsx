@@ -69,11 +69,22 @@ const ProductDetail = ({ navigation, route }) => {
       {loading ? (
         <Loader />
       ) : (
-        <View>
+        <>
           <Header />
-          <ScrollView style={productStyle.productDetailContainer}>
-            {/* <View style={productStyle.carouselView}><Carousel /></View> */}
-
+          <View style={productStyle.productDetailContainer}>
+            <View style={productStyle.carouselView}>
+              <Carousel
+                images={product.images?.map((image) => {
+                  return { source: { uri: image.url } };
+                })}
+              />
+            </View>
+            {/* <Image
+              style={productStyle.productImage}
+              source={{
+                uri: product.images[1]?.url ? product.images[1]?.url : null,
+              }}
+            /> */}
             <View style={productStyle.productDescContainer}>
               <View style={productStyle.productDescSection1}>
                 <Text style={productStyle.productName}>{product.name}</Text>
@@ -89,7 +100,15 @@ const ProductDetail = ({ navigation, route }) => {
                   style={productStyle.productRating}
                   readonly
                 />
-                <Text style={productStyle.productId}>({} reviews)</Text>
+                <Text style={productStyle.productId}>
+                  (
+                  {product.reviews?.length < 0 ? (
+                    <>0</>
+                  ) : (
+                    <>{product.reviews?.length}</>
+                  )}{" "}
+                  reviews)
+                </Text>
               </View>
               <View style={productStyle.productDescSection3}>
                 <Text style={productStyle.productPrice}>
@@ -147,8 +166,8 @@ const ProductDetail = ({ navigation, route }) => {
             >
               <Text style={productStyle.addToCartBtnTxt}>Add to Cart</Text>
             </Button>
-          </ScrollView>
-        </View>
+          </View>
+        </>
       )}
     </View>
   );
@@ -159,25 +178,26 @@ export default ProductDetail;
 const productStyle = StyleSheet.create({
   productContainer: {
     backgroundColor: "#AAA1",
+    backgroundColor: "#FFF",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
 
   productDetailContainer: {
+    flex: 1,
     marginTop: 10,
     padding: 5,
   },
   carouselView: {
     backgroundColor: "#FFF",
   },
+  productImage: { width: "15%", height: "50%" },
   productDescContainer: {
     marginTop: 10,
     padding: 5,
     backgroundColor: "#FFF",
   },
   productDescSection1: {
-    flexDirection: "row",
-    alignItems: "center",
     marginBottom: 15,
   },
   productDescSection2: {
@@ -197,7 +217,8 @@ const productStyle = StyleSheet.create({
   reviewBtn: {
     marginTop: 15,
     backgroundColor: "#FF6347",
-    width: "30%",
+    justifyContent: "center",
+    width: "100%",
   },
   reviewBtnTxt: {
     fontSize: 10,
@@ -234,8 +255,9 @@ const productStyle = StyleSheet.create({
     color: "#808080",
   },
   addToCartBtn: {
+    justifyContent: "center",
     backgroundColor: "#FF6347",
-    height: "30%",
+    height: "7%",
     borderRadius: 8,
   },
   addToCartBtnTxt: {

@@ -69,73 +69,65 @@ const Register = ({ nav, route }) => {
 
   return (
     <ScrollView style={registerStyle.registerScroll}>
-      {loading ? (
-        <Loader />
-      ) : (
-        <>
-          <View style={registerStyle.registerContainer}>
-            <Avatar.Image
-              size={100}
-              source={{ uri: avatar ? avatar : null }}
-              style={{ backgroundColor: "#FF6347" }}
-            />
+      <View style={registerStyle.registerContainer}>
+        <Avatar.Image
+          size={100}
+          source={{ uri: avatar ? avatar : null }}
+          style={{ backgroundColor: "#FF6347" }}
+        />
 
-            <TouchableOpacity onPress={handleImage}>
-              <Text style={{ color: "#FF6347", marginTop: 10 }}>
-                Change Photo
-              </Text>
-            </TouchableOpacity>
+        <TouchableOpacity onPress={handleImage}>
+          <Text style={{ color: "#FF6347", marginTop: 10 }}>Change Photo</Text>
+        </TouchableOpacity>
 
-            <View style={{ width: "70%" }}>
-              <TextInput
-                style={registerStyle.input}
-                placeholder="Name"
-                value={name}
-                onChangeText={setName}
-                inputMode="text"
-              />
-              <TextInput
-                style={registerStyle.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                inputMode="email"
-              />
-              <TextInput
-                style={registerStyle.input}
-                placeholder="Contact"
-                value={contact}
-                onChangeText={setContact}
-                inputMode="decimal"
-                maxLength={10}
-              />
-              <TextInput
-                style={registerStyle.input}
-                placeholder="Password"
-                value={password}
-                inputMode="text"
-                secureTextEntry={true}
-                onChangeText={setPassword}
-              />
-            </View>
+        <View style={{ width: "70%" }}>
+          <TextInput
+            style={registerStyle.input}
+            placeholder="Name"
+            value={name}
+            onChangeText={setName}
+            inputMode="text"
+          />
+          <TextInput
+            style={registerStyle.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            inputMode="email"
+          />
+          <TextInput
+            style={registerStyle.input}
+            placeholder="Contact"
+            value={contact}
+            onChangeText={setContact}
+            inputMode="decimal"
+            maxLength={10}
+          />
+          <TextInput
+            style={registerStyle.input}
+            placeholder="Password"
+            value={password}
+            inputMode="text"
+            secureTextEntry={true}
+            onChangeText={setPassword}
+          />
+        </View>
 
-            <Button
-              style={registerStyle.btn}
-              onPress={registerHandler}
-              disabled={!email || !password || !name}
-            >
-              <Text style={{ color: "#fff" }}>Register</Text>
-            </Button>
+        <Button
+          style={registerStyle.btn}
+          onPress={registerHandler}
+          disabled={!email || !password || !name}
+        >
+          <Text style={{ color: "#fff" }}>Register</Text>
+        </Button>
 
-            <View style={{ marginVertical: 20, flexDirection: "row" }}>
-              <Text>Already a User?</Text>
-              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text style={registerStyle.login}> Login</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </>
-      )}
+        <View style={{ marginVertical: 20, flexDirection: "row" }}>
+          <Text>Already a User?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={registerStyle.login}> Login</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
   );
 };
