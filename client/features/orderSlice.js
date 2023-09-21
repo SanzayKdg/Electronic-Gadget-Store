@@ -19,7 +19,7 @@ export const createOrder = createAsyncThunk(
 export const orderSlice = createSlice({
   name: "order",
   initialState: {
-    loading: false,
+    loading: true,
     order: {},
     error: null,
     success: null,

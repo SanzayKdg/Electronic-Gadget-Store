@@ -17,12 +17,21 @@ import ChangePassword from "./Screens/ChangePassword";
 import Messages from "./Screens/Messages";
 import MyOrders from "./Screens/MyOrders";
 import Wishlist from "./Screens/Wishlist";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CameraComponent from "./Screens/CameraComponent";
+import Verify from "./Screens/Verify";
+import { getProfileAsync } from "./features/userSlice";
 
 const Main = ({ navigation }) => {
+  const dispatch = useDispatch();
   const Stack = createNativeStackNavigator();
   const { isAuthenticated } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getProfileAsync());
+    }
+  }, [dispatch, isAuthenticated]);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -72,6 +81,11 @@ const Main = ({ navigation }) => {
           name="Messages"
           options={{ headerShown: false }}
           component={Messages}
+        />
+        <Stack.Screen
+          name="Verify"
+          options={{ headerShown: false }}
+          component={Verify}
         />
 
         {/* ----------- PRODUCT  ----------- */}

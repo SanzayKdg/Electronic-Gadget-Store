@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { registerAsync } from "../features/authSlice";
 import mime from "mime";
+import Loader from "../Components/Loader";
 const Register = ({ nav, route }) => {
   const navigation = useNavigation();
   const [formSent, setFormSent] = useState(false);
@@ -57,7 +58,7 @@ const Register = ({ nav, route }) => {
   useEffect(() => {
     if (success && formSent === true) {
       alert(message);
-      // navigation.navigate("Verify")
+      navigation.navigate("Verify");
       setFormSent(false);
     }
 
@@ -68,60 +69,73 @@ const Register = ({ nav, route }) => {
 
   return (
     <ScrollView style={registerStyle.registerScroll}>
-      <View style={registerStyle.registerContainer}>
-        <Avatar.Image
-          size={100}
-          source={{ uri: avatar ? avatar : null }}
-          style={{ backgroundColor: "#FF6347" }}
-        />
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <View style={registerStyle.registerContainer}>
+            <Avatar.Image
+              size={100}
+              source={{ uri: avatar ? avatar : null }}
+              style={{ backgroundColor: "#FF6347" }}
+            />
 
-        <TouchableOpacity onPress={handleImage}>
-          <Text style={{ color: "#FF6347", marginTop: 10 }}>Change Photo</Text>
-        </TouchableOpacity>
+            <TouchableOpacity onPress={handleImage}>
+              <Text style={{ color: "#FF6347", marginTop: 10 }}>
+                Change Photo
+              </Text>
+            </TouchableOpacity>
 
-        <View style={{ width: "70%" }}>
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Name"
-            value={name}
-            onChangeText={setName}
-          />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Contact"
-            value={contact}
-            onChangeText={setContact}
-          />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Password"
-            value={password}
-            secureTextEntry={true}
-            onChangeText={setPassword}
-          />
-        </View>
+            <View style={{ width: "70%" }}>
+              <TextInput
+                style={registerStyle.input}
+                placeholder="Name"
+                value={name}
+                onChangeText={setName}
+                inputMode="text"
+              />
+              <TextInput
+                style={registerStyle.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={setEmail}
+                inputMode="email"
+              />
+              <TextInput
+                style={registerStyle.input}
+                placeholder="Contact"
+                value={contact}
+                onChangeText={setContact}
+                inputMode="decimal"
+                maxLength={10}
+              />
+              <TextInput
+                style={registerStyle.input}
+                placeholder="Password"
+                value={password}
+                inputMode="text"
+                secureTextEntry={true}
+                onChangeText={setPassword}
+              />
+            </View>
 
-        <Button
-          style={registerStyle.btn}
-          onPress={registerHandler}
-          disabled={!email || !password || !name}
-        >
-          <Text style={{ color: "#fff" }}>Register</Text>
-        </Button>
+            <Button
+              style={registerStyle.btn}
+              onPress={registerHandler}
+              disabled={!email || !password || !name}
+            >
+              <Text style={{ color: "#fff" }}>Register</Text>
+            </Button>
 
-        <View style={{ marginVertical: 20, flexDirection: "row" }}>
-          <Text>Already a User?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text style={registerStyle.login}> Login</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+            <View style={{ marginVertical: 20, flexDirection: "row" }}>
+              <Text>Already a User?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+                <Text style={registerStyle.login}> Login</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 };

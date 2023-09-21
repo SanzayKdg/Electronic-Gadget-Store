@@ -4,7 +4,9 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  StatusBar, Platform,
+  StatusBar,
+  Platform,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
@@ -13,6 +15,7 @@ import { loginAsync } from "../features/authSlice";
 
 const Login = ({ navigation }) => {
   const { isAuthenticated, error } = useSelector((state) => state.auth);
+  const { message } = useSelector((state) => state.user);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,8 +31,9 @@ const Login = ({ navigation }) => {
     }
     if (isAuthenticated) {
       navigation.navigate("Account");
+      ToastAndroid.show(message, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
     }
-  }, [error, dispatch, navigation, isAuthenticated]);
+  }, [error, dispatch, navigation, isAuthenticated, ToastAndroid]);
 
   return (
     <View style={loginStyle.loginContainer}>

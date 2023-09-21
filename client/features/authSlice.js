@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api } from "./api/api";
+import { api, api2 } from "./api/api";
 
 // ----------- ACTION STARTS HERE --------------
 
@@ -7,7 +7,7 @@ import { api } from "./api/api";
 export const registerAsync = createAsyncThunk(
   "auth/register",
   async (formData) => {
-    const response = await api.post("/register", formData);
+    const response = await api2.post("/register", formData);
     return response.data;
   }
 );
@@ -35,7 +35,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: {},
-    loading: false,
+    loading: true,
     error: null,
     isAuthenticated: false,
   },
@@ -51,6 +51,7 @@ export const authSlice = createSlice({
         state.user = action.payload.user;
         state.success = action.payload.success;
         state.message = action.payload.message;
+        state.isAuthenticated = true;
       })
       .addCase(registerAsync.rejected, (state, action) => {
         state.loading = false;

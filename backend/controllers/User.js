@@ -9,7 +9,6 @@ export const registerUser = async (req, res, next) => {
   try {
     const { name, email, password, contact } = req.body;
     const avatar = req.files.avatar.tempFilePath;
-
     let user = await User.findOne({ email });
 
     if (user) {
@@ -29,7 +28,6 @@ export const registerUser = async (req, res, next) => {
     fs.rmSync("./tmp", { recursive: true });
 
     // create a otp
-
     const otp = Math.floor(Math.random() * 1000000).toString();
     user = await User.create({
       name,
@@ -52,17 +50,12 @@ export const registerUser = async (req, res, next) => {
       user,
       201,
       res,
-      "Account Created Successfully. Please verify your account with the OTP sent in your email."
+      "Account Created Successfully. Please verify your account."
     );
-
-    console.log(user, "from frontend");
   } catch (error) {
-    console.log(error, "error is here");
     res.status(500).json({
       success: false,
       message: error.message,
-      msg: "Error from here",
-      resp: error,
     });
   }
 };
@@ -141,6 +134,21 @@ export const logout = async (req, res, next) => {
       success: true,
       message: "Logged out successfully",
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// get user profile
+export const myProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    // sending token as response
+    sendToken(user, 200, res, `Welcome ${user.name}`);
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
@@ -17,103 +18,136 @@ import Wishlist from "react-native-vector-icons/AntDesign";
 import Message from "react-native-vector-icons/MaterialCommunityIcons";
 import Loader from "../Components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutAsync } from "../features/authSlice";
+import { loginAsync, logoutAsync } from "../features/authSlice";
+import { getProfileAsync } from "../features/userSlice";
 
 const Account = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { user, loading, error, isAuthenticated } = useSelector(
-    (state) => state.auth
+  // const { user, error, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, error, isAuthenticated, loading, message } = useSelector(
+    (state) => state.user
   );
-
   // ----------- LOAD USER --------------
 
   useEffect(() => {
     if (error) {
       alert(error);
     }
-  }, [error]);
+    if (isAuthenticated) {
+      dispatch(getProfileAsync());
+      
+    }
+  }, [error, dispatch, isAuthenticated]);
 
   // ----------- LOGOUT --------------
   const logoutHandler = () => {
     dispatch(logoutAsync());
     navigation.navigate("Login");
   };
-  return loading ? (
-    <Loader />
-  ) : (
+  return (
     <View style={accountStyle.accountContainer}>
       <SafeAreaView>
         {isAuthenticated ? (
-          <View style={accountStyle.userSection}>
-            <View style={accountStyle.topSection}>
-              <View style={accountStyle.userDescContainer}>
-                <Image
-                  style={accountStyle.userImage}
-                  source={{ uri: user.avatar.url ? user.avatar.url : null }}
-                />
-                <View style={accountStyle.userDesc}>
-                  <Text style={accountStyle.textItemHead}>{user.name}</Text>
-                  <Text style={accountStyle.textItems}>{user.email}</Text>
-                  <Text style={accountStyle.textItems}>{user.contact}</Text>
-                  <Text style={accountStyle.textItems1}>
-                    User Since: {user.createdAt}
-                  </Text>
+          <>
+            {loading ? (
+              <Loader />
+            ) : (
+              <>
+                <View style={accountStyle.userSection}>
+                  <View style={accountStyle.topSection}>
+                    <View style={accountStyle.userDescContainer}>
+                      <Image
+                        style={accountStyle.userImage}
+                        source={{
+                          uri: user.avatar.url ? user.avatar.url : null,
+                        }}
+                      />
+                      <View style={accountStyle.userDesc}>
+                        <Text style={accountStyle.textItemHead}>
+                          {user.name}
+                        </Text>
+                        <Text style={accountStyle.textItems}>{user.email}</Text>
+                        <Text style={accountStyle.textItems}>
+                          {user.contact}
+                        </Text>
+                        <Text style={accountStyle.textItems1}>
+                          User Since: {user.createdAt}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <TouchableOpacity onPress={logoutHandler}>
+                      <Logout
+                        name="exit-to-app"
+                        size={30}
+                        style={accountStyle.midCategoryIcons}
+                      />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={accountStyle.midSection}>
+                    <TouchableOpacity style={accountStyle.midCategory}>
+                      <Orders
+                        name="format-list-bulleted"
+                        size={25}
+                        style={accountStyle.midCategoryIcons}
+                      />
+                      <Text style={accountStyle.textItems}>Orders</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={accountStyle.midCategory}>
+                      <Cart
+                        name="shopping-cart"
+                        size={25}
+                        style={accountStyle.midCategoryIcons}
+                      />
+                      <Text style={accountStyle.textItems}>Cart</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={accountStyle.midCategory}>
+                      <Wishlist
+                        name="heart"
+                        size={25}
+                        style={accountStyle.midCategoryIcons}
+                      />
+                      <Text style={accountStyle.textItems}>Wishlist</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={accountStyle.midCategory}>
+                      <Message
+                        name="message"
+                        size={25}
+                        style={accountStyle.midCategoryIcons}
+                      />
+                      <Text style={accountStyle.textItems}>Message</Text>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={accountStyle.bottomSection}>
+                    <Button style={accountStyle.accountBtn}>
+                      <Text style={accountStyle.accountBtnTxt}>
+                        Update Profile
+                      </Text>
+                    </Button>
+                    <Button style={accountStyle.accountBtn}>
+                      <Text style={accountStyle.accountBtnTxt}>
+                        Change Password
+                      </Text>
+                    </Button>
+                    {user.verified === true ? (
+                      <></>
+                    ) : (
+                      <Button
+                        onPress={() => navigation.navigate("Verify")}
+                        style={accountStyle.accountBtn}
+                      >
+                        <Text style={accountStyle.accountBtnTxt}>
+                          Verify Account
+                        </Text>
+                      </Button>
+                    )}
+                  </View>
                 </View>
-              </View>
-
-              <TouchableOpacity onPress={logoutHandler}>
-                <Logout
-                  name="exit-to-app"
-                  size={30}
-                  style={accountStyle.midCategoryIcons}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={accountStyle.midSection}>
-              <TouchableOpacity style={accountStyle.midCategory}>
-                <Orders
-                  name="format-list-bulleted"
-                  size={25}
-                  style={accountStyle.midCategoryIcons}
-                />
-                <Text style={accountStyle.textItems}>Orders</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={accountStyle.midCategory}>
-                <Cart
-                  name="shopping-cart"
-                  size={25}
-                  style={accountStyle.midCategoryIcons}
-                />
-                <Text style={accountStyle.textItems}>Cart</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={accountStyle.midCategory}>
-                <Wishlist
-                  name="heart"
-                  size={25}
-                  style={accountStyle.midCategoryIcons}
-                />
-                <Text style={accountStyle.textItems}>Wishlist</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={accountStyle.midCategory}>
-                <Message
-                  name="message"
-                  size={25}
-                  style={accountStyle.midCategoryIcons}
-                />
-                <Text style={accountStyle.textItems}>Message</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={accountStyle.bottomSection}>
-              <Button style={accountStyle.accountBtn}>
-                <Text style={accountStyle.accountBtnTxt}>Update Profile</Text>
-              </Button>
-              <Button style={accountStyle.accountBtn}>
-                <Text style={accountStyle.accountBtnTxt}>Change Password</Text>
-              </Button>
-            </View>
-          </View>
+              </>
+            )}
+          </>
         ) : (
           <View style={accountStyle.isNotAuthenticatedContainer}>
             <Text style={accountStyle.isNotAuthenticatedText}>

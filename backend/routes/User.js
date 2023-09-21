@@ -5,6 +5,7 @@ import {
   getAllUsers,
   loginUser,
   logout,
+  myProfile,
   passwordRecovery,
   registerUser,
   updatePassword,
@@ -20,6 +21,7 @@ router.route("/register").post(registerUser);
 router.route("/verify").post(isAuthenticated, verfiyAccount);
 router.route("/login").post(loginUser);
 router.route("/logout").get(logout);
+router.route("/profile").get(isAuthenticated, myProfile);
 router.route("/password/forgot").post(forgotPassword);
 router.route("/password/reset/:token").put(passwordRecovery);
 

@@ -37,7 +37,7 @@ export const shippingSlice = createSlice({
   name: "shipping",
   initialState: {
     error: null,
-    loading: false,
+    loading: true,
     shipppingDetail: {},
   },
   extraReducers: (builder) => {

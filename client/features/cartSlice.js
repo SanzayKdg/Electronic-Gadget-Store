@@ -49,7 +49,7 @@ export const deleteAllCartItem = createAsyncThunk(
 export const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    loading: false,
+    loading: true,
     cart: {},
     carts: [],
     error: null,
