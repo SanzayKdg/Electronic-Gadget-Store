@@ -8,22 +8,28 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
 import Carousel from "./Carousel";
-
+import Wishlist from "react-native-vector-icons/AntDesign";
 import { Rating } from "react-native-elements";
 import { Button, Dialog } from "react-native-paper";
 import Loader from "../Components/Loader";
-import axios from "axios";
-import { baseURL } from "../url";
 import { useDispatch, useSelector } from "react-redux";
 import { getSingleProduct } from "../features/productSlice";
 import { addToCart } from "../features/cartSlice";
+import {
+  addToWishlist,
+  getMyWishlist,
+  removeFromWishlist,
+} from "../features/wishlistSlice";
 
 const ProductDetail = ({ navigation, route }) => {
   const [openDialog, setOpenDialog] = useState(false);
+  const [itemSent, setItemSent] = useState(false);
+  const [cartSent, setCartSent] = useState(false);
 
   const openDialogHandler = () => {
     setOpenDialog(!openDialog);
@@ -34,22 +40,16 @@ const ProductDetail = ({ navigation, route }) => {
   const { loading, product, error } = useSelector((state) => state.product);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { success } = useSelector((state) => state.cart);
+  const { error: wishlist_error, success: wishlist_success } = useSelector(
+    (state) => state.wishlist
+  );
+  const { wishlists } = useSelector((state) => state.wishlist);
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (error) {
-      alert("Some error occured. Please try again.");
-    }
-
-    dispatch(getSingleProduct(id));
-  }, [dispatch, id]);
 
   const addToCartHandler = () => {
     const cartItem = {
-      name: product.name,
-      image: product.images[0].url,
       quantity: 1,
       product: id,
-      price: product.price,
       user: user._id,
     };
 
@@ -58,11 +58,72 @@ const ProductDetail = ({ navigation, route }) => {
       navigation.navigate("Login");
     }
     dispatch(addToCart(cartItem));
-
-    if (success) {
-      alert("Successfully added to cart");
-    }
+    setCartSent(true);
   };
+
+  const addWishList = async () => {
+    const wishlist_item = {
+      product: id,
+      user: user._id,
+    };
+    if (!isAuthenticated) {
+      ToastAndroid.show(
+        "Please login first",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+      navigation.navigate("Login");
+    }
+
+    dispatch(addToWishlist(wishlist_item));
+    // dispatch(getSingleProduct(id));
+    dispatch(getMyWishlist(user._id));
+    setItemSent(true);
+  };
+
+  const removeWishlist = async () => {
+    dispatch(removeFromWishlist(id));
+    ToastAndroid.show(
+      "Item Removed from wishlist",
+      ToastAndroid.SHORT,
+      ToastAndroid.BOTTOM
+    );
+    dispatch(getMyWishlist(user._id));
+  };
+
+  useEffect(() => {
+    if (error) {
+      alert("Some error occured. Please try again.");
+    }
+    if (success && cartSent === true) {
+      ToastAndroid.show(
+        "Successfully added to cart",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+      setCartSent(false);
+    }
+
+    dispatch(getSingleProduct(id));
+  }, [dispatch, id, error, success, cartSent]);
+
+  useEffect(() => {
+    if (wishlist_error) {
+      alert(wishlist_error);
+    }
+    if (wishlist_success && itemSent === true) {
+      ToastAndroid.show(
+        "Added to Wishlist",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+      setItemSent(false);
+    }
+  }, [wishlist_error, wishlist_success, itemSent, ToastAndroid]);
+
+  const isProductInWishlist = wishlists?.some((wishlistItem) => {
+    return wishlistItem.product.product_id === id;
+  });
 
   return (
     <View style={productStyle.productContainer}>
@@ -79,15 +140,33 @@ const ProductDetail = ({ navigation, route }) => {
                 })}
               />
             </View>
-            {/* <Image
-              style={productStyle.productImage}
-              source={{
-                uri: product.images[1]?.url ? product.images[1]?.url : null,
-              }}
-            /> */}
             <View style={productStyle.productDescContainer}>
               <View style={productStyle.productDescSection1}>
-                <Text style={productStyle.productName}>{product.name}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Text style={productStyle.productName}>{product.name}</Text>
+                  <TouchableOpacity style={productStyle.wishlistContainer}>
+                    {isProductInWishlist === false ? (
+                      <>
+                        <Wishlist
+                          name="heart"
+                          size={25}
+                          color={"#AAA8"}
+                          onPress={addWishList}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Wishlist
+                          name="heart"
+                          size={25}
+                          color={"#e53935"}
+                          onPress={removeWishlist}
+                        />
+                      </>
+                    )}
+                  </TouchableOpacity>
+                </View>
+
                 <Text style={productStyle.productId}>
                   Product # {product._id}
                 </Text>
@@ -274,6 +353,9 @@ const productStyle = StyleSheet.create({
     marginVertical: 15,
     fontSize: 15,
   },
-  productImage: {},
+  wishlistContainer: {
+    marginVertical: 15,
+    flexDirection: "row",
+  },
 });
 // info.gasgroup@gmail.com

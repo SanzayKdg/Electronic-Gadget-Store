@@ -86,7 +86,7 @@ export const removeCartItem = async (req, res, next) => {
       return next(
         res
           .status(404)
-          .json({ success: false, message: "Cart not found with this id" })
+          .json({ success: false, message: "Cart not found" })
       );
     }
 

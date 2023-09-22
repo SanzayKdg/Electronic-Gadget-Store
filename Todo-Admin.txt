@@ -1,18 +1,14 @@
-Admin Components
-2. Dashboard -- Done
-1. Login -- Done
+Admin Components -- TODO
+1. Login
+2. Dashboard
 3. Products
-    i. Add Products - Done
-    ii. All Products - Done
-    iii. Update Products - Done
+    i. Add Products
+    ii. All Products
+    iii. Update Products
 4. Users
-    i. All Users - Done
-    ii. Update Users - Done
+    i. All Users
+    ii. Update Users
 5. Orders   
-    i. All Orders - Done
-    ii. Update Orders - Done
-6. Reviews -- Done
-
-Todo
-State Management in all
-Persist state when reload
+    i. All Orders
+    ii. Update Orders
+6. Reviews

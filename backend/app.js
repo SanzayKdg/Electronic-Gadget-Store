@@ -10,6 +10,7 @@ import order from "./routes/Order.js";
 import payment from "./routes/Payment.js";
 import cart from "./routes/Cart.js";
 import shipping from "./routes/Shipping.js";
+import wishlist from "./routes/Wishlist.js";
 const app = express();
 
 // dotenv configuration
@@ -47,5 +48,6 @@ app.use("/api/v1", order);
 app.use("/api/v1", payment);
 app.use("/api/v1", cart);
 app.use("/api/v1", shipping);
+app.use("/api/v1", wishlist);
 
 export default app;

@@ -70,7 +70,7 @@ const Account = ({ navigation }) => {
                           {user.contact}
                         </Text>
                         <Text style={accountStyle.textItems1}>
-                          User Since: {user.createdAt}
+                          User Since: {user.createdAt?.slice(0, 4)}
                         </Text>
                       </View>
                     </View>
@@ -85,7 +85,10 @@ const Account = ({ navigation }) => {
                   </View>
 
                   <View style={accountStyle.midSection}>
-                    <TouchableOpacity style={accountStyle.midCategory}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("MyOrders")}
+                      style={accountStyle.midCategory}
+                    >
                       <Orders
                         name="format-list-bulleted"
                         size={25}
@@ -93,7 +96,10 @@ const Account = ({ navigation }) => {
                       />
                       <Text style={accountStyle.textItems}>Orders</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={accountStyle.midCategory}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Cart")}
+                      style={accountStyle.midCategory}
+                    >
                       <Cart
                         name="shopping-cart"
                         size={25}
@@ -101,7 +107,10 @@ const Account = ({ navigation }) => {
                       />
                       <Text style={accountStyle.textItems}>Cart</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={accountStyle.midCategory}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Wishlist")}
+                      style={accountStyle.midCategory}
+                    >
                       <Wishlist
                         name="heart"
                         size={25}
@@ -109,7 +118,10 @@ const Account = ({ navigation }) => {
                       />
                       <Text style={accountStyle.textItems}>Wishlist</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={accountStyle.midCategory}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Messages")}
+                      style={accountStyle.midCategory}
+                    >
                       <Message
                         name="message"
                         size={25}

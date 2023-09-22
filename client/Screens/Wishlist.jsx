@@ -8,44 +8,129 @@ import {
   StatusBar,
   ScrollView,
   Platform,
+  ToastAndroid,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Right from "react-native-vector-icons/FontAwesome";
+import { useDispatch, useSelector } from "react-redux";
+import { getMyWishlist, removeFromWishlist } from "../features/wishlistSlice";
+import Login from "./Login";
+import Loader from "../Components/Loader";
 const Wishlist = () => {
-  const stock = 0;
+  const { wishlists, loading, error } = useSelector((state) => state.wishlist);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(getMyWishlist(user._id));
+    }
+
+    if (error) {
+      ToastAndroid.show(error, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+    }
+  }, [dispatch, isAuthenticated, error]);
+
   return (
-    <View style={wishlistStyle.wishlistContainer}>
-      <Text style={wishlistStyle.wishlistHeader}>My Wishlist</Text>
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <View style={wishlistStyle.wishlistContainer}>
+          {!isAuthenticated ? (
+            <Login />
+          ) : (
+            <>
+              <Text style={wishlistStyle.wishlistHeader}>My Wishlist</Text>
+              {wishlists?.length === 0 ? (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      padding: 10,
+                      fontWeight: "600",
+                      textAlign: "center",
+                      color: "#A8A8A8",
+                    }}
+                  >
+                    Nothing in Wishlist
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <ScrollView style={wishlistStyle.wishlistItemContainer}>
+                    {wishlists &&
+                      wishlists.map((item, index) => (
+                        <View key={index} style={wishlistStyle.wishlistItem}>
+                          <Image
+                            source={{
+                              uri: item.product.image
+                                ? item.product.image
+                                : null,
+                            }}
+                            style={wishlistStyle.cartImage}
+                          />
 
-      <ScrollView style={wishlistStyle.wishlistItemContainer}>
-        <View style={wishlistStyle.wishlistItem}>
-          <Image
-            source={require("../images/products/smartphones/Apple/iPhone-14-Pro-Max-black.jpg")}
-            style={wishlistStyle.cartImage}
-          />
+                          <View>
+                            <Text style={{ marginVertical: 2.5 }}>
+                              {item.product.name}
+                            </Text>
+                            <Text style={{ marginVertical: 2.5 }}>
+                              Rs. {item.product.price}
+                            </Text>
 
-          <View>
-            <Text style={{ marginVertical: 2.5 }}>
-              Iphone 14 Pro Max 256 GB
-            </Text>
-            <Text style={{ marginVertical: 2.5 }}>Rs. 2450000</Text>
+                            <View style={wishlistStyle.wishlistActions}>
+                              <Text
+                                onPress={async () => {
+                                  ToastAndroid.show(
+                                    "Removed from Wishlist",
+                                    ToastAndroid.SHORT,
+                                    ToastAndroid.BOTTOM
+                                  );
+                                  dispatch(
+                                    removeFromWishlist(item.product.product_id)
+                                  );
+                                  await dispatch(getMyWishlist(user._id));
+                                }}
+                                style={wishlistStyle.outOfStock}
+                              >
+                                Remove
+                              </Text>
+                              <Text> | </Text>
+                              <Text
+                                style={
+                                  item.product.stock === 0
+                                    ? wishlistStyle.outOfStock
+                                    : wishlistStyle.inStock
+                                }
+                              >
+                                {item.product.stock === 0
+                                  ? "Out Of Stock"
+                                  : "In Stock"}
+                              </Text>
+                            </View>
+                          </View>
 
-            <View style={wishlistStyle.wishlistActions}>
-              <Text style={wishlistStyle.outOfStock}>Remove</Text>
-              <Text
-                style={
-                  stock === 0 ? wishlistStyle.outOfStock : wishlistStyle.inStock
-                }
-              >
-                {stock === 0 ? "Out Of Stock" : "In Stock"}
-              </Text>
-            </View>
-          </View>
-
-          <Right name="chevron-right" size={30} color={"#0009"} />
+                          <Right
+                            name="chevron-right"
+                            size={30}
+                            color={"#0009"}
+                          />
+                        </View>
+                      ))}
+                  </ScrollView>
+                </>
+              )}
+            </>
+          )}
         </View>
-      </ScrollView>
-    </View>
+      )}
+    </>
   );
 };
 
@@ -75,15 +160,18 @@ const wishlistStyle = StyleSheet.create({
     borderWidth: 0.5,
     padding: 20,
     alignItems: "center",
+    marginVertical: 5,
   },
   cartImage: {
     width: 60,
     height: 60,
+    borderWidth: 1,
   },
 
   wishlistActions: {
     flexDirection: "row",
     marginTop: 5,
+    alignItems: "center",
   },
   outOfStock: {
     color: "#DC4C64",

@@ -5,6 +5,7 @@ import {
   StatusBar,
   Image,
   TextInput,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import ShippingTruck from "react-native-vector-icons/MaterialCommunityIcons";
@@ -36,7 +37,7 @@ const Shipping = ({ nav, route }) => {
   };
 
   return (
-    <View style={shippingStyle.shippingContainer}>
+    <ScrollView style={shippingStyle.shippingContainer}>
       <View style={shippingStyle.shippingTopContainer}>
         <View style={shippingStyle.shippingIconContainer}>
           <ShippingTruck
@@ -112,6 +113,7 @@ const Shipping = ({ nav, route }) => {
             placeholder="Zip Code"
             value={zipCode}
             onChangeText={setZipCode}
+            inputMode="decimal"
           />
 
           <Button
@@ -122,7 +124,7 @@ const Shipping = ({ nav, route }) => {
           </Button>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

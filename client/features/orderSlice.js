@@ -4,6 +4,14 @@ import { api, api1 } from "./api/api";
 // ----------- ACTION STARTS HERE --------------
 
 // ----------- CREATE ORDER --------------
+export const getAllOrdersAsync = createAsyncThunk(
+  "order/all-orders",
+  async () => {
+    const response = await api.get("/orders/my_orders");
+    return response.data;
+  }
+);
+// ----------- CREATE ORDER --------------
 export const createOrder = createAsyncThunk(
   "order/new_order",
   async (orderItems) => {
@@ -21,12 +29,25 @@ export const orderSlice = createSlice({
   initialState: {
     loading: true,
     order: {},
+    orders: [],
     error: null,
     success: null,
   },
 
   extraReducers: (builder) => {
     builder
+      // ----------- GET ORDER --------------
+      .addCase(getAllOrdersAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllOrdersAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action.payload.orders;
+      })
+      .addCase(getAllOrdersAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       // ----------- CREATE ORDER --------------
       .addCase(createOrder.pending, (state) => {
         state.loading = true;

@@ -181,7 +181,7 @@ const ConfirmOrder = ({ nav, route }) => {
             <View style={confirmOrderStyle.orderDetails}>
               <Text style={confirmOrderStyle.totalText}>Grand Total</Text>
               <Text style={confirmOrderStyle.totalText}>
-                Nrs. {grand_total}
+                Nrs. {grand_total.toFixed(2)}
               </Text>
             </View>
           </View>

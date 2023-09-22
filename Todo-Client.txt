@@ -1,19 +1,39 @@
 Client Screens
 
-Products -- Done
-ProductDetail -- Done
-Register -- Done
-Login -- Done
-Account -- Done
+Products -- 50% Done
+ProductDetail -- 70% Done
+Register -- 100% Done
+Login -- 100% Done
+Account -- 100% Done
 
 
 Home 
-Shipping Details -- Done
-Proceed To Pay -- Done
-Payment Details -- Done
-Update Profile -- Done
-Change Password -- Done
-Messages -- Done
-My Orders -- Done
-Wishlists -- Done
-Cart -- Done
+Shipping Details -- Done 100%
+Proceed To Pay -- Done 100%
+Payment Details -- Done 100%
+Update Profile -- Done 100%
+Change Password -- Done 100%
+Messages -- UI only Done
+My Orders -- UI only Done
+Wishlists -- UI only Done
+Cart -- Done 100%
+
+TODO
+1. Products
+a. Filter logic
+b. algorithm
+c. search functionality
+
+2. Product Detail
+a. Submit Review & Rating
+b. View Reviews and Rating in a carousel
+
+3. Home Screen 
+a. Brands Category
+b. Featured Products --> by Algorithm
+
+4. User Orders -- Done 100%
+5. User WishList
+a. Add to wish list -- Done 100% 
+a. Get wish list Item -- Done 100% 
+c. Remove from wish list -- Done 100% 

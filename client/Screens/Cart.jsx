@@ -39,7 +39,7 @@ const Cart = () => {
     if (isAuthenticated) {
       dispatch(getCartItems(user._id));
     }
-  }, [dispatch, error]);
+  }, [dispatch, error, isAuthenticated]);
 
   return (
     <>
@@ -69,93 +69,123 @@ const Cart = () => {
       ) : (
         <>
           <View style={cartStyle.cartContainer}>
-            {loading ? (
-              <Loader />
-            ) : (
-              <ScrollView>
-                <View style={cartStyle.topView}>
-                  <Text style={cartStyle.textTop}>Product</Text>
-                  <Text style={cartStyle.textTop}>Quantity</Text>
-                  <Text style={cartStyle.textTop}>Amount</Text>
+            <ScrollView>
+              {carts?.length <= 0 ? (
+                <View
+                  style={{
+                    paddingVertical: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginVertical: 250,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      padding: 10,
+                      fontWeight: "600",
+                      textAlign: "center",
+                      color: "#A8A8A8",
+                    }}
+                  >
+                    Nothing in the cart
+                  </Text>
+                  <Text
+                    onPress={() => navigation.navigate("Products")}
+                    style={{
+                      fontSize: 20,
+                      padding: 10,
+                      fontWeight: "600",
+                      textAlign: "center",
+                      color: "#FF6346",
+                      textDecorationLine: "underline",
+                    }}
+                  >
+                    Click here to add items
+                  </Text>
                 </View>
-
-                <View style={cartStyle.cartItemsContainer}>
-                  {carts &&
-                    carts.map((item, index) => (
-                      <View key={index} style={cartStyle.cartItems}>
-                        <View style={cartStyle.productDetailsContainer}>
-                          <Image
-                            source={{ uri: item.product.image }}
-                            style={cartStyle.cartImage}
-                          />
-
-                          <View style={cartStyle.productDescView}>
-                            <Text style={cartStyle.productNameTxt}>
-                              {item.product.name.slice(0, 20)}...
-                            </Text>
-                            <Text
-                              style={cartStyle.remove}
-                              onPress={async () => {
-                                await dispatch(deleteCartItem(item.cart_id));
-                                await dispatch(getCartItems(user._id));
-                              }}
-                            >
-                              Remove
-                            </Text>
-                          </View>
-                        </View>
-
-                        <View style={cartStyle.quantityContainer}>
-                          <Add
-                            name="add"
-                            size={20}
-                            style={cartStyle.qtyBtn}
-                            onPress={async () => {
-                              const cartId = item.cart_id;
-                              const quantity = Number(item.quantity + 1);
-                              await dispatch(
-                                updateCartItem({ cartId, quantity })
-                              );
-                              await dispatch(getCartItems(user._id));
-                            }}
-                          />
-                          <Text style={cartStyle.qtyInput}>
-                            {item.quantity}
-                          </Text>
-                          <Subtract
-                            name="minus"
-                            size={20}
-                            style={cartStyle.qtyBtn}
-                            onPress={async () => {
-                              const cartId = item.cart_id;
-                              const quantity = Number(item.quantity - 1);
-                              await dispatch(
-                                updateCartItem({ cartId, quantity })
-                              );
-                              await dispatch(getCartItems(user._id));
-                            }}
-                          />
-                        </View>
-
-                        <Text>Rs. {item.quantity * item.product.price}</Text>
-                      </View>
-                    ))}
-                </View>
-
-                <View style={cartStyle.bottomView}>
-                  <View style={cartStyle.hrLine}></View>
-
-                  <View style={cartStyle.checkoutBtnContainer}>
-                    <Button
-                      onPress={checkoutHandler}
-                      style={cartStyle.checkOutBtn}
-                    >
-                      <Text style={cartStyle.checkoutTxt}>Checkout</Text>
-                    </Button>
+              ) : (
+                <>
+                  <View style={cartStyle.topView}>
+                    <Text style={cartStyle.textTop}>Product</Text>
+                    <Text style={cartStyle.textTop}>Quantity</Text>
+                    <Text style={cartStyle.textTop}>Amount</Text>
                   </View>
-                </View>
-              </ScrollView>
-            )}
+
+                  <View style={cartStyle.cartItemsContainer}>
+                    {carts &&
+                      carts.map((item, index) => (
+                        <View key={index} style={cartStyle.cartItems}>
+                          <View style={cartStyle.productDetailsContainer}>
+                            <Image
+                              source={{ uri: item.product.image }}
+                              style={cartStyle.cartImage}
+                            />
+
+                            <View style={cartStyle.productDescView}>
+                              <Text style={cartStyle.productNameTxt}>
+                                {item.product.name.slice(0, 20)}...
+                              </Text>
+                              <Text
+                                style={cartStyle.remove}
+                                onPress={() => {
+                                  dispatch(deleteCartItem(item.cart_id));
+                                  dispatch(getCartItems(user._id));
+                                }}
+                              >
+                                Remove
+                              </Text>
+                            </View>
+                          </View>
+
+                          <View style={cartStyle.quantityContainer}>
+                            <Add
+                              name="add"
+                              size={20}
+                              style={cartStyle.qtyBtn}
+                              onPress={() => {
+                                const cartId = item.cart_id;
+                                const quantity = Number(item.quantity + 1);
+                                dispatch(updateCartItem({ cartId, quantity }));
+                                dispatch(getCartItems(user._id));
+                              }}
+                            />
+                            <Text style={cartStyle.qtyInput}>
+                              {item.quantity}
+                            </Text>
+                            <Subtract
+                              name="minus"
+                              size={20}
+                              style={cartStyle.qtyBtn}
+                              onPress={() => {
+                                const cartId = item.cart_id;
+                                const quantity = Number(item.quantity - 1);
+                                dispatch(updateCartItem({ cartId, quantity }));
+                                dispatch(getCartItems(user._id));
+                              }}
+                            />
+                          </View>
+
+                          <Text>Rs. {item.quantity * item.product.price}</Text>
+                        </View>
+                      ))}
+                  </View>
+
+                  <View style={cartStyle.bottomView}>
+                    <View style={cartStyle.hrLine}></View>
+
+                    <View style={cartStyle.checkoutBtnContainer}>
+                      <Button
+                        onPress={checkoutHandler}
+                        style={cartStyle.checkOutBtn}
+                      >
+                        <Text style={cartStyle.checkoutTxt}>Checkout</Text>
+                      </Button>
+                    </View>
+                  </View>
+                </>
+              )}
+            </ScrollView>
           </View>
         </>
       )}
@@ -167,7 +197,7 @@ export default Cart;
 
 const cartStyle = StyleSheet.create({
   cartContainer: {
-    backgroundColor: "#AAA1",
+    backgroundColor: "#FFF",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },

@@ -27,8 +27,8 @@ const PaymentDetails = ({ nav, route }) => {
   const [expDate, setExpDate] = useState("");
   const [cvc, setCvc] = useState("");
   const dispatch = useDispatch();
-  const { loading, success, error } = useSelector((state) => state.order);
-  const { carts } = useSelector((state) => state.cart);
+  const { success, error } = useSelector((state) => state.order);
+  const { loading, carts } = useSelector((state) => state.cart);
   const navigation = useNavigation();
   const formattedDate = (e) => {
     const date = e.replace(/[^0-9]/g, "");
@@ -199,7 +199,7 @@ const PaymentDetails = ({ nav, route }) => {
               >
                 <Text style={paymentStyle.continueTxt}>
                   {paymentType === "card"
-                    ? "Pay Nrs. " + grand_total
+                    ? "Pay Nrs. " + grand_total.toFixed(2)
                     : "Place Order"}
                 </Text>
               </Button>
