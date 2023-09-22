@@ -15,23 +15,24 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
-import { allOrder } from "../../../Redux/Actions/order";
-import { clearErrors } from "../../../Redux/Slices/allOrderSlice";
 import Loader from "../../Layout/Loader/Loader";
 import { Link } from "react-router-dom";
+import { getAllOrdersAsync } from "../../../features/Order/order";
 
 const Orders = () => {
-  const { loading, orders, error } = useSelector((state) => state.allOrder);
+  const { orders, error, loading } = useSelector((state) => state.order);
   const alert = useAlert();
   const dispatch = useDispatch();
+
+  console.log(orders)
 
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
     }
-    dispatch(allOrder());
-  }, [alert, error, dispatch]);
+
+    dispatch(getAllOrdersAsync());
+  }, [alert, error]);
 
   return (
     <div className="orderListContainer">
@@ -84,7 +85,7 @@ const Orders = () => {
                             <Td className="tableAction">
                               {item.paymentInfo.method}
                             </Td>
-                            <Td className="tableAction">{item.totalPrice}</Td>
+                            <Td className="tableAction">{item?.totalPrice?.toFixed(2)}</Td>
                             <Td className="tableAction tableActionBtn">
                               <Link
                                 to={`/admin/order/${item._id}`}

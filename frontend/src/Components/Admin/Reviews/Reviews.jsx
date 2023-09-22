@@ -17,8 +17,6 @@ import { Input } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
-import { clearErrors } from "../../../Redux/Slices/allReviews";
-import { allreviews } from "../../../Redux/Actions/product";
 
 const Reviews = () => {
   const { loading, reviews, error } = useSelector((state) => state.allReviews);
@@ -28,14 +26,12 @@ const Reviews = () => {
 
   useEffect(() => {
     if (error) {
-      dispatch(clearErrors());
       alert.error(error);
     }
   }, [error, dispatch, alert]);
 
   const reviewHandler = (e) => {
     e.preventDefault();
-    dispatch(allreviews(productId));
   };
   return (
     <div className="reviewListContainer">

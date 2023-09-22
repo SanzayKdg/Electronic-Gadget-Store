@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { deleteOrder, getAllOrders, updateOrder } from "../Api/OrderApi";
+import { api, api1 } from "../Api/api";
 
 // ----------- ACTION STARTS HERE --------------
 
@@ -8,7 +8,7 @@ import { deleteOrder, getAllOrders, updateOrder } from "../Api/OrderApi";
 export const getAllOrdersAsync = createAsyncThunk(
   "orders/get-all-orders",
   async () => {
-    const response = await getAllOrders();
+    const response = await api1.get("/admin/orders");
     return response.data;
   }
 );
@@ -18,7 +18,7 @@ export const getAllOrdersAsync = createAsyncThunk(
 export const updateOrderAsync = createAsyncThunk(
   "orders/update-order",
   async ({ orderId, orderData }) => {
-    const response = await updateOrder(orderId, orderData);
+    const response = await api.put(`/admin/order/${orderId}`, { orderData });
     return response.data;
   }
 );
@@ -28,7 +28,7 @@ export const updateOrderAsync = createAsyncThunk(
 export const deleteOrderAsync = createAsyncThunk(
   "orders/delete-order",
   async (orderId) => {
-    const response = await deleteOrder(orderId);
+    const response = await api.delete(`/admin/order/${orderId}`);
     return response.data;
   }
 );
@@ -36,7 +36,6 @@ export const deleteOrderAsync = createAsyncThunk(
 // ----------- ACTION ENDS HERE --------------
 
 // ----------- SLICES STARTS HERE --------------
-
 export const orderSlice = createSlice({
   name: "orders",
   initialState: {

@@ -17,10 +17,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
 import { Link, Navigate, useParams } from "react-router-dom";
-import {
-  deleteProductAsync,
-  getAllProductsAsync,
-} from "../../../Redux/Slices/Products/productSlice";
+import { deleteProductAsync, getAllProductsAsync } from "../../../features/Products/products";
+
 const AllProducts = () => {
   const {
     loading,
@@ -31,9 +29,8 @@ const AllProducts = () => {
  
   const alert = useAlert();
   const dispatch = useDispatch();
-  const { id } = useParams();
+
   const deleteHandler = (productId) => {
-    console.log("My product id is", productId);
     dispatch(deleteProductAsync(productId));
   };
   useEffect(() => {
@@ -67,8 +64,8 @@ const AllProducts = () => {
                       <Th className="productAction">Actions</Th>
                     </Tr>
                   </Thead>
-                  {products.products &&
-                    products.products.map((item, index) => (
+                  {products &&
+                    products?.map((item, index) => (
                       <Fragment key={index}>
                         <Tbody>
                           <Tr>

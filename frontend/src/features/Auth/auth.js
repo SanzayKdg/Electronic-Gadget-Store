@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { login, logout } from "../Api/AuthApi";
+import { api, api1 } from "../Api/api";
+
 
 // ----------- ACTION STARTS HERE --------------
 
@@ -7,16 +8,14 @@ import { login, logout } from "../Api/AuthApi";
 export const loginAsync = createAsyncThunk(
   "auth/login",
   async ({ email, password }) => {
-    const response = await login(email, password);
-
+    const response = await api1.post("/login", { email, password });
     return response.data;
   }
 );
 
 // logout action
 export const logoutAsync = createAsyncThunk("auth/logout", async () => {
-  const response = await logout();
-  localStorage.removeItem("persist:root");
+  const response = await api.get("/logout");
   return response.data;
 });
 
@@ -27,21 +26,21 @@ export const logoutAsync = createAsyncThunk("auth/logout", async () => {
 export const authSlice = createSlice({
   name: "auth",
   initialState: {
-    isAuthenticated: false,
-    loading: false,
     user: {},
+    loading: false,
     error: null,
-    success: false,
+    isAuthenticated: false,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // ----------- LOGIN --------------
       .addCase(loginAsync.pending, (state) => {
         state.loading = true;
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        state.user = action.payload;
         state.isAuthenticated = true;
       })
       .addCase(loginAsync.rejected, (state, action) => {
@@ -49,16 +48,21 @@ export const authSlice = createSlice({
         state.user = null;
         state.error = action.payload;
       })
+
+      // ----------- LOGOUT --------------
       .addCase(logoutAsync.pending, (state) => {
         state.loading = true;
+        state.isAuthenticated = true;
       })
       .addCase(logoutAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.user = null;
+        state.isAuthenticated = false;
         state.success = action.payload;
       })
       .addCase(logoutAsync.rejected, (state, action) => {
         state.loading = false;
+        state.isAuthenticated = true;
         state.error = action.payload;
       });
   },

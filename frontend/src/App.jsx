@@ -12,38 +12,43 @@ import { useSelector } from "react-redux";
 import UpdateProduct from "./Components/Admin/Products/UpdateProduct.jsx";
 import UpdateOrder from "./Components/Admin/Orders/UpdateOrder";
 import UpdateUsers from "./Components/Admin/Users/UpdateUsers";
+import { useEffect, useState } from "react";
 function App() {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
-  // const { user, isAuthenticated } = useSelector((state) => state.login);
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const [authenticated, setAuthenticated] = useState(isAuthenticated);
+  useEffect(() => {
+    const isAuth = localStorage.getItem("isAuthenticated");
+    if (isAuth) {
+      setAuthenticated(JSON.parse(isAuth));
+    }
+  }, []);
   return (
     <Router>
       <Routes>
         <Route exact path="/" element={<Login />} />
-        {isAuthenticated && (
+        {authenticated && (
           <Route exact path="/dashboard" Component={Dashboard} />
         )}
-        {isAuthenticated && (
+        {authenticated && (
           <Route exact path="/admin/product/add" Component={AddProducts} />
         )}
-        {isAuthenticated && (
+        {authenticated && (
           <Route exact path="/admin/products" Component={AllProducts} />
         )}
-        {isAuthenticated && (
+        {authenticated && (
           <Route exact path="/admin/product/:id" Component={UpdateProduct} />
         )}
-        {isAuthenticated && (
+        {authenticated && (
           <Route exact path="/admin/orders" Component={Orders} />
         )}
-        {isAuthenticated && (
-          <Route exact path="/admin/users" Component={Users} />
-        )}
-        {isAuthenticated && (
+        {authenticated && <Route exact path="/admin/users" Component={Users} />}
+        {authenticated && (
           <Route exact path="/admin/products/reviews" Component={Reviews} />
         )}
-        {isAuthenticated && (
+        {authenticated && (
           <Route exact path="/admin/order/:id" Component={UpdateOrder} />
         )}
-        {isAuthenticated && (
+        {authenticated && (
           <Route exact path="/admin/user/:id" Component={UpdateUsers} />
         )}
 

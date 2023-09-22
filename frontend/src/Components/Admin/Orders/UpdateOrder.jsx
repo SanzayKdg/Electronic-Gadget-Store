@@ -11,8 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateOrder } from "../../../Redux/Actions/order";
-import { clearErrors, clearMessage } from "../../../Redux/Slices/updateOrder";
 
 const UpdateOrder = () => {
   const [status, setStatus] = useState("");
@@ -31,13 +29,11 @@ const UpdateOrder = () => {
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
     }
     if (success) {
       alert.success("Order Status Updated Successfully");
-      dispatch(clearMessage());
     }
-  }, [error, alert, dispatch, success]);
+  }, [error, alert, success]);
 
   return (
     <div className="addProductsContainer">

@@ -1,17 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createProduct, getAllProducts } from "../Api/ProductApi";
-
-const initialState = {
-  products: [],
-  product: {},
-};
+import { api, api1, api2 } from "../Api/api";
 
 // ----------- ACTION STARTS HERE --------------
 // Create a Product
 export const createProductAsync = createAsyncThunk(
   "products/create-new",
   async (productData) => {
-    const response = await createProduct(productData);
+    const response = await api2.post("/product/new",  productData );
     return response.data;
   }
 );
@@ -20,7 +15,7 @@ export const createProductAsync = createAsyncThunk(
 export const getAllProductsAsync = createAsyncThunk(
   "products/get-all-products",
   async () => {
-    const response = await getAllProducts();
+    const response = await api1.get("/admin/products");
     return response.data;
   }
 );
@@ -29,7 +24,7 @@ export const getAllProductsAsync = createAsyncThunk(
 export const deleteProductAsync = createAsyncThunk(
   "products/delete-product",
   async (productId) => {
-    const response = await getAllProducts(productId);
+    const response = api.delete(`/admin/product/${productId}`);
     return response.data;
   }
 );
@@ -38,7 +33,9 @@ export const deleteProductAsync = createAsyncThunk(
 export const updateProductAsync = createAsyncThunk(
   "products/update-product",
   async ({ productId, productData }) => {
-    const response = await getAllProducts(productId, productData);
+    const response = await api2.put(`/admin/product/${productId}`, {
+      productData,
+    });
     return response.data;
   }
 );
@@ -48,7 +45,13 @@ export const updateProductAsync = createAsyncThunk(
 
 export const productSlice = createSlice({
   name: "products",
-  initialState,
+  initialState: {
+    users: [],
+    user: {},
+    loading: false,
+    error: null,
+    success: false,
+  },
   reducers: {},
   extraReducers: (builder) => {
     builder

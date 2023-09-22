@@ -14,9 +14,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { laptop, smartPhones } from "../../../Data/ProductCategories";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
-import { createProductAsync } from "../../../Redux/Slices/Products/productSlice";
+import { createProductAsync } from "../../../features/Products/products";
 
 const AddProducts = () => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  const [authenticated, setAuthenticated] = useState(isAuthenticated);
+
+  useEffect(() => {
+    const isAuth = localStorage.getItem("isAuthenticated");
+    if (isAuth) {
+      setAuthenticated(JSON.parse(isAuth));
+    }
+  }, []);
+
   const { loading, error, success } = useSelector((state) => state.product);
   const alert = useAlert();
   const dispatch = useDispatch();

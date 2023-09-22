@@ -10,8 +10,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import { useNavigate, useParams } from "react-router-dom";
-import { clearErrors, clearMessage } from "../../../Redux/Slices/updateUser";
-import { updateUser } from "../../../Redux/Actions/admin";
 import Loader from "../../Layout/Loader/Loader";
 
 const UpdateUsers = () => {

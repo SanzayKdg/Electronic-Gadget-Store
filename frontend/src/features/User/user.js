@@ -1,19 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getAllUsers, updateUser } from "../Api/UserApi";
-
-const initialState = {
-  users: [],
-  user: {},
-};
+import { api, api1, api2 } from "../Api/api";
 
 // ----------- ACTION STARTS HERE --------------
 
 // Get All User Action
 
 export const getAllUserAsync = createAsyncThunk(
-  "users/get-all-users",
+  "users/all",
   async () => {
-    const response = await getAllUsers();
+    const response = await api1.get("/admin/users");
     return response.data;
   }
 );
@@ -21,9 +16,9 @@ export const getAllUserAsync = createAsyncThunk(
 // Update User Role Action
 
 export const updateUserRoleAsync = createAsyncThunk(
-  "users/update-user",
+  "users/update",
   async ({ userId, userData }) => {
-    const response = await updateUser(userId, userData);
+    const response = await api.patch(`/admin/user/${userId}`, userData);
     return response.data;
   }
 );

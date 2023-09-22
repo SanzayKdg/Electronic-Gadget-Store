@@ -13,8 +13,6 @@ import AdminSidebar from "../../Layout/AdminSidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { laptop, smartPhones } from "../../../Data/ProductCategories";
 import { useAlert } from "react-alert";
-import { clearErrors, clearMessage } from "../../../Redux/Slices/updateProduct";
-import { updateProduct } from "../../../Redux/Actions/product";
 import Loader from "../../Layout/Loader/Loader";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
@@ -77,7 +75,6 @@ const UpdateProduct = () => {
       productData.append("images", image);
     });
 
-    dispatch(updateProduct(productData, id));
     clearForm();
   };
 
@@ -85,14 +82,12 @@ const UpdateProduct = () => {
   useEffect(() => {
     if (error) {
       alert.error(error);
-      dispatch(clearErrors());
     }
     if (success) {
-      dispatch(clearMessage());
-      navigate("/admin/products")
+      navigate("/admin/products");
       alert.success("Product Updated Successfully");
     }
-  }, [error, alert, dispatch, success]);
+  }, [error, alert, success]);
 
   return (
     <div className="addProductsContainer">

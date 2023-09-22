@@ -12,7 +12,7 @@ import { useAlert } from "react-alert";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../Layout/Loader/Loader";
-import { loginAsync } from "../../../Redux/Slices/Auth/authSlice";
+import { loginAsync } from "../../../features/Auth/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,10 +22,9 @@ const Login = () => {
   const alert = useAlert();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, error, loading, isAuthenticated } = useSelector(
+  const { error, loading, isAuthenticated, user } = useSelector(
     (state) => state.auth
   );
-
 
   // login Function
   const loginHandler = (e) => {
@@ -42,6 +41,7 @@ const Login = () => {
     if (isAuthenticated) {
       alert.success("Login Success");
       navigate("/dashboard");
+      // localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
     }
   }, [alert, navigate, error, isAuthenticated]);
 
