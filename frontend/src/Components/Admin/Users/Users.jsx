@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Table,
   Thead,
@@ -18,20 +18,23 @@ import { useEffect } from "react";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
 import { Link } from "react-router-dom";
-import { getAllUserAsync } from "../../../features/User/user";
+import { deleteUserAsync, getAllUserAsync } from "../../../features/User/user";
 
 const Users = () => {
-  const { users, error, loading } = useSelector((state) => state.user);
-
+  const { users, error, loading, success } = useSelector((state) => state.user);
+  const [deletedUser, setDeletedUser] = useState(false);
   const dispatch = useDispatch();
   const alert = useAlert();
   useEffect(() => {
     if (error) {
       alert.error(error);
     }
-
+    if (success === true && deletedUser === true) {
+      alert.success("User Deleted");
+      setDeletedUser(false);
+    }
     dispatch(getAllUserAsync());
-  }, [alert, dispatch]);
+  }, [alert, dispatch, error, success, deletedUser]);
 
   return (
     <div className="userListContainer">
@@ -78,7 +81,13 @@ const Users = () => {
                               >
                                 <EditIcon className="userIcon" />
                               </Link>
-                              <Button className="userBtn">
+                              <Button
+                                onClick={() => {
+                                  dispatch(deleteUserAsync(item._id));
+                                  setDeletedUser(true);
+                                }}
+                                className="userBtn"
+                              >
                                 <DeleteIcon className="userIcon" />
                               </Button>
                             </Td>

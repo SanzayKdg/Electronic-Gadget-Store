@@ -159,7 +159,7 @@ export const deleteProducts = async (req, res, next) => {
       await cloudinary.v2.uploader.destroy(product.images[i].public_id);
     }
 
-    await product.remove();
+    // await product.remove();
 
     res.status(200).json({
       success: true,

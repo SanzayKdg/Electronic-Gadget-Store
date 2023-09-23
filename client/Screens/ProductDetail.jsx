@@ -40,10 +40,11 @@ const ProductDetail = ({ navigation, route }) => {
   const { loading, product, error } = useSelector((state) => state.product);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { success } = useSelector((state) => state.cart);
-  const { error: wishlist_error, success: wishlist_success } = useSelector(
-    (state) => state.wishlist
-  );
-  const { wishlists } = useSelector((state) => state.wishlist);
+  const {
+    error: wishlist_error,
+    wishlists,
+    success: wishlist_success,
+  } = useSelector((state) => state.wishlist);
   const dispatch = useDispatch();
 
   const addToCartHandler = () => {

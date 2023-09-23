@@ -37,3 +37,7 @@ b. Featured Products --> by Algorithm
 a. Add to wish list -- Done 100% 
 a. Get wish list Item -- Done 100% 
 c. Remove from wish list -- Done 100% 
+
+
+Todo
+form validation

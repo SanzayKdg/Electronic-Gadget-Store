@@ -10,6 +10,8 @@ export const getAllProducts = createAsyncThunk("products/all", async () => {
   return response.data;
 });
 
+// get single product action
+
 export const getSingleProduct = createAsyncThunk(
   "product/single",
   async (id) => {

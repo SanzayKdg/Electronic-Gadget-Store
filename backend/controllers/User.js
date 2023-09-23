@@ -168,6 +168,18 @@ export const getAllUsers = async (req, res, next) => {
     });
   }
 };
+// get all users -- admin
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 // update user role -- admin
 export const updateUser = async (req, res, next) => {
@@ -177,6 +189,7 @@ export const updateUser = async (req, res, next) => {
       email: req.body.email,
       role: req.body.role,
     };
+
     await User.findByIdAndUpdate(req.params.id, newUserData, {
       new: true,
       runValidators: true,

@@ -35,7 +35,6 @@ const Dashboard = () => {
   const { loading, user, isAuthenticated, error } = useSelector(
     (state) => state.auth
   );
-  console.log(user);
   const [authenticated, setAuthenticated] = useState(isAuthenticated);
   const { users } = useSelector((state) => state.user);
   let { products } = useSelector((state) => state.product);

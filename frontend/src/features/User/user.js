@@ -4,21 +4,33 @@ import { api, api1, api2 } from "../Api/api";
 // ----------- ACTION STARTS HERE --------------
 
 // Get All User Action
+export const getAllUserAsync = createAsyncThunk("users/all", async () => {
+  const response = await api1.get("/admin/users");
+  return response.data;
+});
 
-export const getAllUserAsync = createAsyncThunk(
-  "users/all",
-  async () => {
-    const response = await api1.get("/admin/users");
+// Get Single User Action
+export const getUserAsync = createAsyncThunk(
+  "users/get-user",
+  async (userId) => {
+    const response = await api1.get(`/admin/user/${userId}`);
     return response.data;
   }
 );
 
 // Update User Role Action
-
 export const updateUserRoleAsync = createAsyncThunk(
   "users/update",
   async ({ userId, userData }) => {
-    const response = await api.patch(`/admin/user/${userId}`, userData);
+    const response = await api1.put(`/admin/user/${userId}`, userData);
+    return response.data;
+  }
+);
+// Delete User Action
+export const deleteUserAsync = createAsyncThunk(
+  "users/delete",
+  async (userId) => {
+    const response = await api1.delete(`/admin/user/${userId}`);
     return response.data;
   }
 );
@@ -50,14 +62,36 @@ export const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(getUserAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUserAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+      })
+      .addCase(getUserAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(updateUserRoleAsync.pending, (state) => {
         state.loading = true;
       })
       .addCase(updateUserRoleAsync.fulfilled, (state, action) => {
         state.loading = false;
-        state.success = action.payload;
+        state.success = true;
       })
       .addCase(updateUserRoleAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteUserAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUserAsync.fulfilled, (state) => {
+        state.loading = false;
+        state.success = true;
+      })
+      .addCase(deleteUserAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

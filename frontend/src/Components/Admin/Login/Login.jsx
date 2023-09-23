@@ -41,7 +41,7 @@ const Login = () => {
     if (isAuthenticated) {
       alert.success("Login Success");
       navigate("/dashboard");
-      // localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
+      localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
     }
   }, [alert, navigate, error, isAuthenticated]);
 

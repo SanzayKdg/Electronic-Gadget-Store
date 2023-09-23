@@ -6,7 +6,7 @@ import { api, api1, api2 } from "../Api/api";
 export const createProductAsync = createAsyncThunk(
   "products/create-new",
   async (productData) => {
-    const response = await api2.post("/product/new",  productData );
+    const response = await api2.post("/product/new", productData);
     return response.data;
   }
 );
@@ -20,11 +20,20 @@ export const getAllProductsAsync = createAsyncThunk(
   }
 );
 
+// Get Single Product
+export const getSingleProductAsync = createAsyncThunk(
+  "product/single",
+  async (id) => {
+    const response = await api.get(`/products/${id}`);
+    return response.data;
+  }
+);
+
 // Delete A Product
 export const deleteProductAsync = createAsyncThunk(
   "products/delete-product",
   async (productId) => {
-    const response = api.delete(`/admin/product/${productId}`);
+    const response = api1.delete(`/product/${productId}`);
     return response.data;
   }
 );
@@ -33,12 +42,22 @@ export const deleteProductAsync = createAsyncThunk(
 export const updateProductAsync = createAsyncThunk(
   "products/update-product",
   async ({ productId, productData }) => {
-    const response = await api2.put(`/admin/product/${productId}`, {
+    const response = await api2.put(`/product/${productId}`, {
       productData,
     });
     return response.data;
   }
 );
+
+// Get All Reviews of a product
+export const getAllReviewsAsync = createAsyncThunk(
+  "products/reviews",
+  async (product_id) => {
+    const response = await api1.get(`/product/reviews?id=${product_id}`);
+    return response.data;
+  }
+);
+
 // ----------- ACTION ENDS HERE --------------
 
 // ----------- SLICES STARTS HERE --------------
@@ -46,15 +65,17 @@ export const updateProductAsync = createAsyncThunk(
 export const productSlice = createSlice({
   name: "products",
   initialState: {
-    users: [],
-    user: {},
+    products: [],
+    product: {},
     loading: false,
     error: null,
     success: false,
+    reviews: [],
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
+      // ----------- ADD PRODUCT --------------
       .addCase(createProductAsync.pending, (state) => {
         state.loading = true;
       })
@@ -67,6 +88,8 @@ export const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // ----------- GET ALL PRODUCTS --------------
       .addCase(getAllProductsAsync.pending, (state) => {
         state.loading = true;
       })
@@ -78,6 +101,20 @@ export const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      // ----------- GET SINGLE PRODUCTS --------------
+      .addCase(getSingleProductAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getSingleProductAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.product = action.payload.product;
+      })
+      .addCase(getSingleProductAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ----------- UPDATE PRODUCT --------------
       .addCase(updateProductAsync.pending, (state) => {
         state.loading = true;
       })
@@ -89,14 +126,29 @@ export const productSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      // ----------- DELETE PRODUCT --------------
       .addCase(deleteProductAsync.pending, (state) => {
         state.loading = true;
       })
-      .addCase(deleteProductAsync.fulfilled, (state, action) => {
+      .addCase(deleteProductAsync.fulfilled, (state) => {
         state.loading = false;
-        state.success = action.payload;
+        state.success = true;
       })
       .addCase(deleteProductAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ----------- GET REVIEWS OF A PRODUCT --------------
+      .addCase(getAllReviewsAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllReviewsAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.reviews = action.payload.reviews;
+      })
+      .addCase(getAllReviewsAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

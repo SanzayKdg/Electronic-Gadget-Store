@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import {
   Table,
   Thead,
@@ -17,31 +17,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { deleteProductAsync, getAllProductsAsync } from "../../../features/Products/products";
+import {
+  deleteProductAsync,
+  getAllProductsAsync,
+} from "../../../features/Products/products";
 
 const AllProducts = () => {
+  const [deletedProduct, setDeletedProduct] = useState(false);
+
   const {
     loading,
     products,
     error,
     success: deleteSuccess,
   } = useSelector((state) => state.product);
- 
+
   const alert = useAlert();
   const dispatch = useDispatch();
 
-  const deleteHandler = (productId) => {
-    dispatch(deleteProductAsync(productId));
-  };
   useEffect(() => {
     if (error) {
       alert.error(error);
     }
-    if (deleteSuccess) {
-      alert.success("Product Deleted Successfully");
+    if (deleteSuccess === true && deletedProduct === true) {
+      alert.success("Product Deleted successfully");
+      setDeletedProduct(false);
     }
     dispatch(getAllProductsAsync());
-  }, [alert, error, dispatch, deleteSuccess]);
+  }, [alert, error, dispatch, deleteSuccess, deletedProduct]);
 
   return (
     <div className="productListContainer">
@@ -57,6 +60,7 @@ const AllProducts = () => {
                 <Table variant="simple">
                   <Thead>
                     <Tr>
+                      <Th className="productAction">S.No.</Th>
                       <Th className="productAction">Product Id</Th>
                       <Th className="productAction">Product Name</Th>
                       <Th className="productAction">Price</Th>
@@ -69,6 +73,7 @@ const AllProducts = () => {
                       <Fragment key={index}>
                         <Tbody>
                           <Tr>
+                            <Td className="tableAction">{index + 1}</Td>
                             <Td className="tableAction">{item._id}</Td>
                             <Td className="tableAction">{item.name}</Td>
                             <Td className="tableAction">{item.price}</Td>
@@ -89,7 +94,11 @@ const AllProducts = () => {
                                 <EditIcon className="productIcon" />
                               </Link>
                               <Button
-                                onClick={() => deleteHandler(item._id)}
+                                onClick={async () => {
+                                  dispatch(deleteProductAsync(item._id));
+                                  await dispatch(getAllProductsAsync());
+                                  setDeletedProduct(true);
+                                }}
                                 className="productBtn"
                               >
                                 <DeleteIcon className="productIcon" />

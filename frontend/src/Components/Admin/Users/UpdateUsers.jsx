@@ -11,16 +11,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../Layout/Loader/Loader";
+import { getUserAsync, updateUserRoleAsync } from "../../../features/User/user";
 
 const UpdateUsers = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const alert = useAlert();
-  const { loading, success, error } = useSelector((state) => state.updateUser);
+  const { loading, success, error, user } = useSelector((state) => state.user);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const navigate = useNavigate();
+  const [updatedUser, setUpdatedUser] = useState(false);
+  useEffect(() => {
+    dispatch(getUserAsync(id));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name !== undefined ? user.name : "");
+      setEmail(user.email !== undefined ? user.email : "");
+      setRole(user.role !== undefined ? user.role : "");
+    }
+  }, [user]);
 
   const updateUserHandler = (e) => {
     e.preventDefault();
@@ -28,21 +41,20 @@ const UpdateUsers = () => {
     userData.set("name", name);
     userData.set("email", email);
     userData.set("role", role);
-    dispatch(updateUser(id, userData));
-    console.log(id, userData);
-  };
 
+    dispatch(updateUserRoleAsync({ userId: id, userData }));
+    setUpdatedUser(true);
+  };
   useEffect(() => {
     if (error) {
-      dispatch(clearErrors());
       alert.error(error);
     }
-    if (success) {
-      dispatch(clearMessage());
-      alert.success("User Role Updated Successfully");
+    if (success === true && updatedUser === true) {
+      alert.success("User Updated Successfully");
       navigate("/admin/users");
+      setUpdatedUser(false);
     }
-  }, [error, success, dispatch, alert, navigate]);
+  }, [error, success, dispatch, alert, navigate, updatedUser]);
 
   return (
     <div className="addProductsContainer">

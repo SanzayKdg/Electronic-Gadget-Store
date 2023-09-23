@@ -19,6 +19,7 @@ import { createProductAsync } from "../../../features/Products/products";
 const AddProducts = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [authenticated, setAuthenticated] = useState(isAuthenticated);
+  const [addedProduct, setProductAdded] = useState(false);
 
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated");
@@ -81,6 +82,7 @@ const AddProducts = () => {
     });
 
     dispatch(createProductAsync(productData));
+    setProductAdded(true);
     clearForm();
   };
 
@@ -89,10 +91,11 @@ const AddProducts = () => {
     if (error) {
       alert.error(error);
     }
-    if (success) {
+    if (success && addedProduct === true) {
       alert.success("Product Added Successfully");
+      setProductAdded(false);
     }
-  }, [error, alert, success]);
+  }, [error, alert, success, addedProduct]);
 
   return (
     <div className="addProductsContainer">

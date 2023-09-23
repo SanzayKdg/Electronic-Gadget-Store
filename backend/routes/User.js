@@ -3,6 +3,7 @@ import {
   deleteUser,
   forgotPassword,
   getAllUsers,
+  getUser,
   loginUser,
   logout,
   myProfile,
@@ -34,6 +35,7 @@ router
 
 router
   .route("/admin/user/:id")
+  .get(isAuthenticated, authorizedRoles("admin"), getUser)
   .put(isAuthenticated, authorizedRoles("admin"), updateUser)
   .delete(isAuthenticated, authorizedRoles("admin"), deleteUser);
 

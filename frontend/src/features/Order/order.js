@@ -13,6 +13,16 @@ export const getAllOrdersAsync = createAsyncThunk(
   }
 );
 
+// Get Order Detail
+
+export const getOrderDetailAsync = createAsyncThunk(
+  "orders/get-order-detail",
+  async (orderId) => {
+    const response = await api1.get(`/admin/order/${orderId}`);
+    return response.data;
+  }
+);
+
 // Update Order Status Action
 
 export const updateOrderAsync = createAsyncThunk(
@@ -56,6 +66,17 @@ export const orderSlice = createSlice({
         state.orders = action.payload.orders;
       })
       .addCase(getAllOrdersAsync.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getOrderDetailAsync.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getOrderDetailAsync.fulfilled, (state, action) => {
+        state.loading = false;
+        state.order = action.payload.order;
+      })
+      .addCase(getOrderDetailAsync.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

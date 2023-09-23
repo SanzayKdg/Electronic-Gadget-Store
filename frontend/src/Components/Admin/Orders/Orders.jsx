@@ -24,8 +24,6 @@ const Orders = () => {
   const alert = useAlert();
   const dispatch = useDispatch();
 
-  console.log(orders)
-
   useEffect(() => {
     if (error) {
       alert.error(error);
@@ -48,9 +46,10 @@ const Orders = () => {
                 <Table variant="simple">
                   <Thead>
                     <Tr>
+                      <Th className="orderAction">S.NO.</Th>
                       <Th className="orderAction">Order Id</Th>
+                      <Th className="orderAction">Order Detail</Th>
                       <Th className="orderAction">Status</Th>
-                      <Th className="orderAction">Quantity</Th>
                       <Th className="orderAction">Payment Method</Th>
                       <Th className="orderAction">Amount</Th>
                       <Th className="orderAction">Actions</Th>
@@ -61,7 +60,17 @@ const Orders = () => {
                       <Fragment key={index}>
                         <Tbody>
                           <Tr>
+                            <Td className="tableAction">{index}</Td>
                             <Td className="tableAction">{item._id}</Td>
+                            <Td className="tableAction">
+                              <Link
+                                className="viewOrderDetail"
+                                to={`/order/detail/${item._id}`}
+                              >
+                                View Detail
+                              </Link>
+                            </Td>
+
                             <Td
                               className={
                                 item.orderStatus === "Delivered"
@@ -77,15 +86,17 @@ const Orders = () => {
                             >
                               {item.orderStatus}
                             </Td>
-                            {item.orderItems.map((quantity, index) => (
+                            {/* {item.orderItems.map((quantity, index) => (
                               <Td key={index} className="tableAction">
                                 {quantity.quantity}
                               </Td>
-                            ))}
+                            ))} */}
                             <Td className="tableAction">
-                              {item.paymentInfo.method}
+                              {item.paymentInfo?.method}
                             </Td>
-                            <Td className="tableAction">{item?.totalPrice?.toFixed(2)}</Td>
+                            <Td className="tableAction">
+                              {item?.totalPrice?.toFixed(2)}
+                            </Td>
                             <Td className="tableAction tableActionBtn">
                               <Link
                                 to={`/admin/order/${item._id}`}

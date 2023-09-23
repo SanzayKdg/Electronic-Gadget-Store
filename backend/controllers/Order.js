@@ -129,6 +129,23 @@ export const allOrdersAdmin = async (req, res, next) => {
   }
 };
 
+// get order detail -- admin
+export const getOrderDetail = async (req, res, next) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // update order status -- admin
 export const updateOrder = async (req, res, next) => {
   try {

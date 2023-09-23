@@ -17,9 +17,12 @@ import { Input } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
+import { getAllReviewsAsync } from "../../../features/Products/products";
 
 const Reviews = () => {
-  const { loading, reviews, error } = useSelector((state) => state.allReviews);
+  const { loading, reviews, product, error } = useSelector(
+    (state) => state.product
+  );
   const dispatch = useDispatch();
   const alert = useAlert();
   const [productId, setProductId] = useState("");
@@ -32,6 +35,7 @@ const Reviews = () => {
 
   const reviewHandler = (e) => {
     e.preventDefault();
+    dispatch(getAllReviewsAsync(productId));
   };
   return (
     <div className="reviewListContainer">
@@ -106,7 +110,7 @@ const Reviews = () => {
                               <Th className="reviewAction">User Name</Th>
                               <Th className="reviewAction">Rating</Th>
                               <Th className="reviewAction">Comment</Th>
-                              <Th className="reviewAction">Actions</Th>
+                              {/* <Th className="reviewAction">Actions</Th> */}
                             </Tr>
                           </Thead>
 
@@ -128,11 +132,11 @@ const Reviews = () => {
                                   <Td className="tableAction">
                                     {item.comment}
                                   </Td>
-                                  <Td className="tableAction">
+                                  {/* <Td className="tableAction">
                                     <Button className="reviewBtn">
                                       <DeleteIcon className="reviewIcon" />
                                     </Button>
-                                  </Td>
+                                  </Td> */}
                                 </Tr>
                               </Fragment>
                             ))}

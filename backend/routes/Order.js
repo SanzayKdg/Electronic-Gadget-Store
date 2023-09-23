@@ -2,6 +2,7 @@ import express from "express";
 import {
   allOrdersAdmin,
   deleteOrder,
+  getOrderDetail,
   getSingleOrder,
   myOrders,
   newOrder,
@@ -23,6 +24,7 @@ router
 
 router
   .route("/admin/order/:id")
+  .get(isAuthenticated, authorizedRoles("admin"), getOrderDetail)
   .put(isAuthenticated, authorizedRoles("admin"), updateOrder)
   .delete(isAuthenticated, authorizedRoles("admin"), deleteOrder);
 export default router;
