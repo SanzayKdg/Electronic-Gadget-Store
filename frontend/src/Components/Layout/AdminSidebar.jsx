@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./AdminSidebar.css";
 import {
   Button,
@@ -18,30 +18,32 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
-import { logoutAsync } from "../../Redux/Slices/Auth/authSlice";
+import { logoutAsync } from "../../features/Auth/auth";
 const AdminSidebar = () => {
   const alert = useAlert();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { error, success } = useSelector((state) => state.auth);
-  // const { error, isAuthenticated } = useSelector((state) => state.logout);
+
+  const logoutHandler = () => {
+    dispatch(logoutAsync());
+  };
+
   useEffect(() => {
     if (error) {
       alert.error(error);
-      // dispatch(clearErrors());
     }
-    // if (isAuthenticated === false) {
-    if (success === false) {
-      // dispatch(clearMessage());
+  }, [error, alert]);
+
+  useEffect(() => {
+    if (success === true) {
       alert.success("Logged Out Successfully");
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("user");
       navigate("/");
     }
-  }, [error, alert, success, navigate]);
+  }, [success, alert, navigate, success]);
 
-  const logoutHandler = () => {
-    // dispatch(logoutAsync());
-    dispatch(logout());
-  };
   return (
     <div className="adminSidebar">
       <div className="logo">
@@ -101,7 +103,7 @@ const AdminSidebar = () => {
           Reviews
         </p>
       </Link>
-      <Link to={"/"} onClick={logoutHandler} className="sidebar__item">
+      <Link onClick={logoutHandler} className="sidebar__item">
         <p>
           <ExitToAppIcon className="muiIcons" />
           Logout

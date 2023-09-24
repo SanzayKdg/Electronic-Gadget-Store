@@ -16,14 +16,19 @@ import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router";
+import {
+  getSingleProductAsync,
+  updateProductAsync,
+} from "../../../features/Products/products";
 const UpdateProduct = () => {
   const navigate = useNavigate();
   const alert = useAlert();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { loading, success, error } = useSelector(
-    (state) => state.updateProduct
+  const { loading, success, error, product } = useSelector(
+    (state) => state.product
   );
+  const [updatedProduct, setUpdatedProduct] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -32,6 +37,23 @@ const UpdateProduct = () => {
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
 
+  useEffect(() => {
+    dispatch(getSingleProductAsync(id));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (product) {
+      const previewImage = product.images?.map((item) => item.url);
+      setName(product.name !== undefined ? product.name : "");
+      setDescription(
+        product.description !== undefined ? product.description : ""
+      );
+      setPrice(product.price !== undefined ? product.price : "");
+      setStock(product.stock !== undefined ? product.stock : "");
+      setCategory(product.category !== undefined ? product.category : "");
+      setImagesPreview(previewImage !== undefined ? previewImage : []);
+    }
+  }, [product]);
   // clear form function
   const clearForm = () => {
     setName("");
@@ -75,7 +97,8 @@ const UpdateProduct = () => {
       productData.append("images", image);
     });
 
-    clearForm();
+    setUpdatedProduct(true);
+    dispatch(updateProductAsync({ productId: id, productData }));
   };
 
   // useEffect
@@ -83,11 +106,12 @@ const UpdateProduct = () => {
     if (error) {
       alert.error(error);
     }
-    if (success) {
+    if (success && updatedProduct === true) {
       navigate("/admin/products");
       alert.success("Product Updated Successfully");
+      setUpdatedProduct(false);
     }
-  }, [error, alert, success]);
+  }, [error, alert, success, updatedProduct]);
 
   return (
     <div className="addProductsContainer">
@@ -190,7 +214,7 @@ const UpdateProduct = () => {
                 </InputGroup>
 
                 <div id="productImagePreview">
-                  {imagesPreview.map((image, index) => (
+                  {imagesPreview?.map((image, index) => (
                     <img src={image} key={index} alt="Product Image" />
                   ))}
                 </div>

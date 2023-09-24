@@ -1,34 +1,33 @@
-import React, { Fragment } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ isAdmin, Component }) => {
-  const { loading, isAuthenticated, user } = useSelector(
-    (state) => state.admin
+const ProtectedRoute = () => {
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const [authenticated, setAuthenticated] = useState(
+    isAuthenticated || JSON.parse(localStorage.getItem("isAuthenticated"))
   );
 
-  return (
-    <Fragment>
-      {loading === false &&
-        // <Route
-        //   {...rest}
-        //   render={(props) => {
-        //     if (isLogin === false) {
-        //       return <Navigate to="/" />;
-        //     }
-        //     if (isAdmin === true && user.role !== "admin") {
-        //       return <Navigate to="/" />;
-        //     }
-        //     return <Component {...props} />;
-        //   }}
-        // />
-        (isAuthenticated && isAdmin === true && user.role === "admin" ? (
-          <Component />
-        ) : (
-          <Navigate to="/" />
-        ))}
-    </Fragment>
+  const [admin, setAdmin] = useState(
+    user?.role || JSON.parse(localStorage.getItem("user"))
   );
+
+  useEffect(() => {
+    const isAuth = localStorage.getItem("isAuthenticated");
+    if (isAuth) {
+      setAuthenticated(JSON.parse(isAuth));
+      setAdmin(JSON.parse(localStorage.getItem("user")));
+    }
+  }, []);
+
+  if (!authenticated) {
+    return <Navigate to={"/"} />;
+  }
+
+  if (admin !== "admin") {
+    return <Navigate to={"/unauthorized"} />;
+  }
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

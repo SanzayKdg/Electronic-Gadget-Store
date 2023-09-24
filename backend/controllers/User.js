@@ -125,6 +125,7 @@ export const loginUser = async (req, res, next) => {
 // logout user
 export const logout = async (req, res, next) => {
   try {
+    console.log("is being Hit here");
     res.cookie("token", null, {
       expires: new Date(Date.now()),
       httpOnly: true,

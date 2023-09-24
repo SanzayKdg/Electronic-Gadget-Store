@@ -14,9 +14,14 @@ import UpdateOrder from "./Components/Admin/Orders/UpdateOrder";
 import UpdateUsers from "./Components/Admin/Users/UpdateUsers";
 import { useEffect, useState } from "react";
 import OrderDetail from "./Components/Admin/Orders/OrderDetail";
+import ProtectedRoute from "./Components/Route/ProtectedRoute";
+import Unauthorized from "./Components/Layout/Unauthorized";
+import NotResolved from "./Components/Layout/NotResolved";
 function App() {
-  const { isAuthenticated } = useSelector((state) => state.auth);
-  const [authenticated, setAuthenticated] = useState(isAuthenticated);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const [authenticated, setAuthenticated] = useState(
+    isAuthenticated || JSON.parse(localStorage.getItem("isAuthenticated"))
+  );
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated");
     if (isAuth) {
@@ -28,47 +33,46 @@ function App() {
       <Routes>
         {/* ----------- AUTHENTICATION ----------- */}
 
-        <Route exact path="/" element={<Login />} />
+        <Route
+          exact
+          path="/"
+          element={!authenticated ? <Login /> : <Dashboard />}
+        />
 
-        {/* ----------- DASHBOARD ----------- */}
+        <Route element={<ProtectedRoute />}>
+          {/* ----------- DASHBOARD ----------- */}
+          <Route exact path="/dashboard" element={<Dashboard />} />
 
-        {authenticated && (
-          <Route exact path="/dashboard" Component={Dashboard} />
-        )}
+          {/* ----------- PRODUCTS ----------- */}
 
-        {/* ----------- PRODUCTS ----------- */}
+          <Route exact path="/admin/product/add" element={<AddProducts />} />
 
-        {authenticated && (
-          <Route exact path="/admin/product/add" Component={AddProducts} />
-        )}
-        {authenticated && (
-          <Route exact path="/admin/products" Component={AllProducts} />
-        )}
-        {authenticated && (
-          <Route exact path="/admin/product/:id" Component={UpdateProduct} />
-        )}
-        {authenticated && (
-          <Route exact path="/admin/products/reviews" Component={Reviews} />
-        )}
+          <Route exact path="/admin/products" element={<AllProducts />} />
 
-        {/* ----------- USERS ----------- */}
+          <Route exact path="/admin/product/:id" element={<UpdateProduct />} />
 
-        {authenticated && <Route exact path="/admin/users" Component={Users} />}
-        {authenticated && (
-          <Route exact path="/admin/user/:id" Component={UpdateUsers} />
-        )}
+          <Route exact path="/admin/products/reviews" element={<Reviews />} />
 
-        {/* ----------- ORDER ----------- */}
+          {/* ----------- USERS ----------- */}
 
-        {authenticated && (
-          <Route exact path="/admin/orders" Component={Orders} />
-        )}
-        {authenticated && (
-          <Route exact path="/admin/order/:id" Component={UpdateOrder} />
-        )}
-        {authenticated && (
-          <Route exact path="/order/detail/:id" Component={OrderDetail} />
-        )}
+          <Route exact path="/admin/users" element={<Users />} />
+
+          <Route exact path="/admin/user/:id" element={<UpdateUsers />} />
+
+          {/* ----------- ORDER ----------- */}
+
+          <Route exact path="/admin/orders" element={<Orders />} />
+
+          <Route exact path="/admin/order/:id" element={<UpdateOrder />} />
+
+          <Route exact path="/order/detail/:id" element={<OrderDetail />} />
+        </Route>
+
+        {/* ----------- UNAUTHORIZED ----------- */}
+        <Route exact path="/unauthorized" element={<Unauthorized />} />
+
+        {/* ----------- UNRESOLVED PATH ----------- */}
+        <Route path="*" element={<NotResolved />} />
       </Routes>
     </Router>
   );

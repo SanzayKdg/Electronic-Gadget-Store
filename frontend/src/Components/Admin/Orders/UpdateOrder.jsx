@@ -11,30 +11,48 @@ import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
 import { useNavigate, useParams } from "react-router-dom";
+import {
+  getOrderDetailAsync,
+  updateOrderAsync,
+} from "../../../features/Order/order";
 
 const UpdateOrder = () => {
   const [status, setStatus] = useState("");
-  const { loading, error, success } = useSelector((state) => state.updateOrder);
+  const { loading, error, success, order } = useSelector(
+    (state) => state.order
+  );
   const dispatch = useDispatch();
   const alert = useAlert();
   const { id } = useParams();
   const navigate = useNavigate();
-  const updateOrderHandler = (e) => {
-    e.preventDefault();
-    const statusData = new FormData();
-    statusData.set("status", status);
-    dispatch(updateOrder(id, statusData));
-    navigate("/admin/orders");
-  };
+
+  const [updatedOrder, setUpdatedOrder] = useState(false);
+
+  useEffect(() => {
+    dispatch(getOrderDetailAsync(id));
+  }, [dispatch]);
+  useEffect(() => {
+    if (order) {
+      setStatus(order.orderStatus !== undefined ? order.orderStatus : "");
+    }
+  }, [order]);
+
   useEffect(() => {
     if (error) {
       alert.error(error);
     }
-    if (success) {
+    if (success && updatedOrder === true) {
       alert.success("Order Status Updated Successfully");
+      setUpdatedOrder(false);
+      navigate("/admin/orders");
     }
-  }, [error, alert, success]);
+  }, [error, alert, success, updatedOrder, navigate]);
 
+  const updateOrderHandler = (e) => {
+    e.preventDefault();
+    dispatch(updateOrderAsync({ orderId: id, status }));
+    setUpdatedOrder(true);
+  };
   return (
     <div className="addProductsContainer">
       {loading ? (
@@ -56,9 +74,23 @@ const UpdateOrder = () => {
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
                   >
+                    {order?.orderStatus === "Shipped" ? (
+                      <></>
+                    ) : (
+                      <option value="Processing">Processing</option>
+                    )}
                     <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Rejected">Rejected</option>
+
+                    {order?.orderStatus === "Processing" ? (
+                      <></>
+                    ) : (
+                      <option value="Delivered">Delivered</option>
+                    )}
+                    {order?.orderStatus === "Shipped" ? (
+                      <></>
+                    ) : (
+                      <option value="Rejected">Rejected</option>
+                    )}
                   </Select>
                 </InputGroup>
 

@@ -27,8 +27,8 @@ export const getOrderDetailAsync = createAsyncThunk(
 
 export const updateOrderAsync = createAsyncThunk(
   "orders/update-order",
-  async ({ orderId, orderData }) => {
-    const response = await api.put(`/admin/order/${orderId}`, { orderData });
+  async ({ orderId, status }) => {
+    const response = await api1.put(`/admin/order/${orderId}`, { status });
     return response.data;
   }
 );
@@ -83,9 +83,9 @@ export const orderSlice = createSlice({
       .addCase(updateOrderAsync.pending, (state) => {
         state.loading = true;
       })
-      .addCase(updateOrderAsync.fulfilled, (state, action) => {
+      .addCase(updateOrderAsync.fulfilled, (state) => {
         state.loading = false;
-        state.success = action.payload;
+        state.success = true;
       })
       .addCase(updateOrderAsync.rejected, (state, action) => {
         state.loading = false;

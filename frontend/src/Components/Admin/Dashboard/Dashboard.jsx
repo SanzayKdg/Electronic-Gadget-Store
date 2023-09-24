@@ -32,13 +32,12 @@ ChartJS.register(
   Legend
 );
 const Dashboard = () => {
-  const { loading, user, isAuthenticated, error } = useSelector(
-    (state) => state.auth
-  );
-  const [authenticated, setAuthenticated] = useState(isAuthenticated);
+  const { loading, error } = useSelector((state) => state.auth);
+  const [authenticated, setAuthenticated] = useState(true ? true : false);
   const { users } = useSelector((state) => state.user);
   let { products } = useSelector((state) => state.product);
   const { orders } = useSelector((state) => state.order);
+
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated");
     if (isAuth) {
@@ -101,7 +100,7 @@ const Dashboard = () => {
         <Loader />
       ) : (
         <>
-          {authenticated ? (
+          {authenticated && (
             <>
               <AdminSidebar />
               <div className="dashboard">
@@ -111,7 +110,7 @@ const Dashboard = () => {
 
                 <div className="dashboard__mid">
                   <div className="dashboard__totalAmt">
-                    <p>Total Amount</p>
+                    <p>Total Revenue</p>
                     <p>Nrs. {totalAmt}</p>
                   </div>
 
@@ -145,8 +144,6 @@ const Dashboard = () => {
                 </div>
               </div>
             </>
-          ) : (
-            <></>
           )}
         </>
       )}

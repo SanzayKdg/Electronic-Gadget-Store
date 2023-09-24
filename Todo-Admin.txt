@@ -4,20 +4,16 @@ Admin Components -- TODO
 3. Products
     i. Add Products --- 100% DONE
     ii. All Products --- 100% DONE
-    iii. Update Products
+    iii. Update Products -- 100% DONE
 4. Users
     i. All Users --- 100% DONE
     ii. Update Users --- 100% DONE
     iii. Delete Users --- 100% DONE
 5. Orders   
     i. All Orders --- 100% DONE
-    ii. Update Orders
+    ii. Update Orders --- 100% DONE
 6. Reviews --- 100% DONE
 
 TODO
-state management
-update Orders
-update Products
 form validation
-logout
 pagination

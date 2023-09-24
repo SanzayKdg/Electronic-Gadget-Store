@@ -15,16 +15,17 @@ import Loader from "../../Layout/Loader/Loader";
 import { loginAsync } from "../../../features/Auth/auth";
 
 const Login = () => {
+  const { error, loading, isAuthenticated, user } = useSelector(
+    (state) => state.auth
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = React.useState(false);
   const handleClick = () => setShow(!show);
+
   const alert = useAlert();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { error, loading, isAuthenticated, user } = useSelector(
-    (state) => state.auth
-  );
 
   // login Function
   const loginHandler = (e) => {
@@ -38,12 +39,19 @@ const Login = () => {
       alert.error(error);
     }
 
-    if (isAuthenticated) {
+    if (isAuthenticated && user?.role === "admin") {
       alert.success("Login Success");
-      navigate("/dashboard");
-      localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
     }
-  }, [alert, navigate, error, isAuthenticated]);
+  }, [alert, error, isAuthenticated, user]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
+      localStorage.setItem("user", JSON.stringify(user?.role));
+
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="adminLogin__formContainer">
