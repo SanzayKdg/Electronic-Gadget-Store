@@ -15,6 +15,7 @@ import {
   getOrderDetailAsync,
   updateOrderAsync,
 } from "../../../features/Order/order";
+import { orderDataValidation } from "../../../Errors/error";
 
 const UpdateOrder = () => {
   const [status, setStatus] = useState("");
@@ -25,7 +26,7 @@ const UpdateOrder = () => {
   const alert = useAlert();
   const { id } = useParams();
   const navigate = useNavigate();
-
+  const [errors, setErrors] = useState({});
   const [updatedOrder, setUpdatedOrder] = useState(false);
 
   useEffect(() => {
@@ -50,8 +51,15 @@ const UpdateOrder = () => {
 
   const updateOrderHandler = (e) => {
     e.preventDefault();
-    dispatch(updateOrderAsync({ orderId: id, status }));
-    setUpdatedOrder(true);
+    const validationErrors = orderDataValidation(status);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    if (status !== "") {
+      dispatch(updateOrderAsync({ orderId: id, status }));
+      setUpdatedOrder(true);
+    }
   };
   return (
     <div className="addProductsContainer">
@@ -92,6 +100,9 @@ const UpdateOrder = () => {
                       <option value="Rejected">Rejected</option>
                     )}
                   </Select>
+                  {errors.status && (
+                    <p className="span_text">{errors.status}</p>
+                  )}
                 </InputGroup>
 
                 <InputGroup className="form__item">

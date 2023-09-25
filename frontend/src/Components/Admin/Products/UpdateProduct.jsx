@@ -20,6 +20,7 @@ import {
   getSingleProductAsync,
   updateProductAsync,
 } from "../../../features/Products/products";
+import { validateProductdata } from "../../../Errors/error";
 const UpdateProduct = () => {
   const navigate = useNavigate();
   const alert = useAlert();
@@ -29,13 +30,14 @@ const UpdateProduct = () => {
     (state) => state.product
   );
   const [updatedProduct, setUpdatedProduct] = useState(false);
-  const [name, setName] = useState("");
+  const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [category, setCategory] = useState("");
   const [images, setImages] = useState([]);
   const [imagesPreview, setImagesPreview] = useState([]);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     dispatch(getSingleProductAsync(id));
@@ -44,7 +46,7 @@ const UpdateProduct = () => {
   useEffect(() => {
     if (product) {
       const previewImage = product.images?.map((item) => item.url);
-      setName(product.name !== undefined ? product.name : "");
+      setProductName(product.name !== undefined ? product.name : "");
       setDescription(
         product.description !== undefined ? product.description : ""
       );
@@ -85,9 +87,24 @@ const UpdateProduct = () => {
   // adding product function
   const updateProductHandler = (e) => {
     e.preventDefault();
+
+    // Form Validation handler
+    const validationErrors = validateProductdata(
+      productName,
+      description,
+      Number(price),
+      Number(stock),
+      category,
+      imagesPreview
+    );
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     const productData = new FormData();
 
-    productData.set("name", name);
+    productData.set("name", productName);
     productData.set("price", price);
     productData.set("description", description);
     productData.set("category", category);
@@ -126,19 +143,26 @@ const UpdateProduct = () => {
               <h1 className="addProductHeader">Update Product</h1>
               <FormControl>
                 <InputGroup className="form__item" size="md">
-                  <FormLabel htmlFor="productName">Product Name:</FormLabel>
+                  <FormLabel htmlFor="productName">
+                    Product Name: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
                     placeholder="Product Name"
                     className="name__input"
                     id="productName"
                     name="productName"
                   />
+                  {errors.productName && (
+                    <p className="span_text">{errors.productName}</p>
+                  )}
                 </InputGroup>
                 <InputGroup className="form__item" size="md">
-                  <FormLabel htmlFor="productPrice">Product Price:</FormLabel>
+                  <FormLabel htmlFor="productPrice">
+                    Product Price: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="text"
                     value={price}
@@ -149,11 +173,12 @@ const UpdateProduct = () => {
                     name="productPrice"
                     maxLength={6}
                   />
+                  {errors.price && <p className="span_text">{errors.price}</p>}
                 </InputGroup>
 
                 <InputGroup className="form__item" size="md">
                   <FormLabel htmlFor="productDesc">
-                    Product Description:
+                    Product Description: <span className="required">*</span>
                   </FormLabel>
                   <Textarea
                     placeholder="Product Description"
@@ -162,10 +187,13 @@ const UpdateProduct = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
+                  {errors.description && (
+                    <p className="span_text">{errors.description}</p>
+                  )}
                 </InputGroup>
                 <InputGroup className="form__item" size="md">
                   <FormLabel htmlFor="productCategory">
-                    Select Category:
+                    Select Category: <span className="required">*</span>
                   </FormLabel>
                   <Select
                     placeholder="Select option"
@@ -185,10 +213,15 @@ const UpdateProduct = () => {
                       ))}
                     </optgroup>
                   </Select>
+                  {errors.category && (
+                    <p className="span_text">{errors.category}</p>
+                  )}
                 </InputGroup>
 
                 <InputGroup className="form__item" size="md">
-                  <FormLabel htmlFor="productStock">Product Stock:</FormLabel>
+                  <FormLabel htmlFor="productStock">
+                    Product Stock: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="text"
                     value={stock}
@@ -199,10 +232,13 @@ const UpdateProduct = () => {
                     name="productStock"
                     maxLength={6}
                   />
+                  {errors.stock && <p className="span_text">{errors.stock}</p>}
                 </InputGroup>
 
                 <InputGroup className="form__item" size={"md"}>
-                  <FormLabel htmlFor="file">Product Image:</FormLabel>
+                  <FormLabel htmlFor="file">
+                    Product Image: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="file"
                     className="file__input"
@@ -211,6 +247,9 @@ const UpdateProduct = () => {
                     multiple
                     onChange={productImageChange}
                   />
+                  {errors.imagesPreview && (
+                    <p className="span_text">{errors.imagesPreview}</p>
+                  )}
                 </InputGroup>
 
                 <div id="productImagePreview">

@@ -12,6 +12,7 @@ import { useAlert } from "react-alert";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader from "../../Layout/Loader/Loader";
 import { getUserAsync, updateUserRoleAsync } from "../../../features/User/user";
+import { userDataValidation } from "../../../Errors/error";
 
 const UpdateUsers = () => {
   const { id } = useParams();
@@ -23,6 +24,8 @@ const UpdateUsers = () => {
   const [role, setRole] = useState("");
   const navigate = useNavigate();
   const [updatedUser, setUpdatedUser] = useState(false);
+  const [errors, setErrors] = useState({});
+
   useEffect(() => {
     dispatch(getUserAsync(id));
   }, [dispatch]);
@@ -37,6 +40,13 @@ const UpdateUsers = () => {
 
   const updateUserHandler = (e) => {
     e.preventDefault();
+
+    const validationErrors = userDataValidation(name, email, role);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     const userData = new FormData();
     userData.set("name", name);
     userData.set("email", email);
@@ -77,6 +87,7 @@ const UpdateUsers = () => {
                     id="name"
                     name="name"
                   />
+                  {errors.name && <p className="span_text">{errors.name}</p>}
                 </InputGroup>
                 <InputGroup className="form__item" size="md">
                   <FormLabel htmlFor="email">User Email:</FormLabel>
@@ -89,6 +100,7 @@ const UpdateUsers = () => {
                     id="email"
                     name="email"
                   />
+                  {errors.email && <p className="span_text">{errors.email}</p>}
                 </InputGroup>
 
                 <InputGroup className="form__item" size="md">
@@ -103,6 +115,7 @@ const UpdateUsers = () => {
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
                   </Select>
+                  {errors.role && <p className="span_text">{errors.role}</p>}
                 </InputGroup>
 
                 <InputGroup className="form__item">

@@ -88,6 +88,9 @@ const Reviews = () => {
                           id="reviewId"
                           name="reviewId"
                         />
+                        {productId === "" && (
+                          <p className="span_text">Product Id is required</p>
+                        )}
                       </InputGroup>
 
                       <InputGroup className="form__item">

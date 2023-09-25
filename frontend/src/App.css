@@ -5,3 +5,10 @@
   margin: 0;
   padding: 0;
 }
+
+.span_text,
+.required{
+  color: #DC4C64 ;
+}
+
+

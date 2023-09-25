@@ -15,5 +15,5 @@ Admin Components -- TODO
 6. Reviews --- 100% DONE
 
 TODO
-form validation
+form validation -- 100% DONE
 pagination

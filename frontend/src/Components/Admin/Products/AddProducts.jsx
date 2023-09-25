@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./AddProducts.css";
 import {
   Button,
@@ -15,11 +15,13 @@ import { laptop, smartPhones } from "../../../Data/ProductCategories";
 import { useAlert } from "react-alert";
 import Loader from "../../Layout/Loader/Loader";
 import { createProductAsync } from "../../../features/Products/products";
+import { validateProductdata } from "../../../Errors/error";
 
 const AddProducts = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [authenticated, setAuthenticated] = useState(isAuthenticated);
   const [addedProduct, setProductAdded] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const isAuth = localStorage.getItem("isAuthenticated");
@@ -31,7 +33,7 @@ const AddProducts = () => {
   const { loading, error, success } = useSelector((state) => state.product);
   const alert = useAlert();
   const dispatch = useDispatch();
-  const [name, setName] = useState("");
+  const [productName, setProductName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
@@ -40,7 +42,7 @@ const AddProducts = () => {
   const [imagesPreview, setImagesPreview] = useState([]);
   // clear form function
   const clearForm = () => {
-    setName("");
+    setProductName("");
     setPrice("");
     setDescription("");
     setStock("");
@@ -48,6 +50,7 @@ const AddProducts = () => {
     setImagesPreview([]);
     setImages([]);
   };
+
   // image preview and converting to url function
   const productImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -69,9 +72,24 @@ const AddProducts = () => {
   // adding product function
   const addProductHandler = (e) => {
     e.preventDefault();
-    const productData = new FormData();
 
-    productData.set("name", name);
+    // Form Validation handler
+    const validationErrors = validateProductdata(
+      productName,
+      description,
+      Number(price),
+      Number(stock),
+      category,
+      imagesPreview
+    );
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // Set product in form data
+    const productData = new FormData();
+    productData.set("name", productName);
     productData.set("price", price);
     productData.set("description", description);
     productData.set("category", category);
@@ -81,6 +99,7 @@ const AddProducts = () => {
       productData.append("images", image);
     });
 
+    // dispatch to backend
     dispatch(createProductAsync(productData));
     setProductAdded(true);
     clearForm();
@@ -109,20 +128,30 @@ const AddProducts = () => {
             <form className="addProductForm" onSubmit={addProductHandler}>
               <h1 className="addProductHeader">Add Product</h1>
               <FormControl>
+                <label htmlFor="Required" className="required">
+                  Please fill all the required fields. (*)
+                </label>
                 <InputGroup className="form__item" size="md">
-                  <FormLabel htmlFor="productName">Product Name:</FormLabel>
+                  <FormLabel htmlFor="productName">
+                    Product Name: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={productName}
+                    onChange={(e) => setProductName(e.target.value)}
                     placeholder="Product Name"
                     className="name__input"
                     id="productName"
                     name="productName"
                   />
+                  {errors.productName && (
+                    <p className="span_text">{errors.productName}</p>
+                  )}
                 </InputGroup>
                 <InputGroup className="form__item" size="md">
-                  <FormLabel htmlFor="productPrice">Product Price:</FormLabel>
+                  <FormLabel htmlFor="productPrice">
+                    Product Price: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="text"
                     value={price}
@@ -133,11 +162,12 @@ const AddProducts = () => {
                     name="productPrice"
                     maxLength={6}
                   />
+                  {errors.price && <p className="span_text">{errors.price}</p>}
                 </InputGroup>
 
                 <InputGroup className="form__item" size="md">
                   <FormLabel htmlFor="productDesc">
-                    Product Description:
+                    Product Description: <span className="required">*</span>
                   </FormLabel>
                   <Textarea
                     placeholder="Product Description"
@@ -146,10 +176,13 @@ const AddProducts = () => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
+                  {errors.description && (
+                    <p className="span_text">{errors.description}</p>
+                  )}
                 </InputGroup>
                 <InputGroup className="form__item" size="md">
                   <FormLabel htmlFor="productCategory">
-                    Select Category:
+                    Select Category: <span className="required">*</span>
                   </FormLabel>
                   <Select
                     placeholder="Select option"
@@ -169,10 +202,15 @@ const AddProducts = () => {
                       ))}
                     </optgroup>
                   </Select>
+                  {errors.category && (
+                    <p className="span_text">{errors.category}</p>
+                  )}
                 </InputGroup>
 
                 <InputGroup className="form__item" size="md">
-                  <FormLabel htmlFor="productStock">Product Stock:</FormLabel>
+                  <FormLabel htmlFor="productStock">
+                    Product Stock: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="text"
                     value={stock}
@@ -183,10 +221,13 @@ const AddProducts = () => {
                     name="productStock"
                     maxLength={6}
                   />
+                  {errors.stock && <p className="span_text">{errors.stock}</p>}
                 </InputGroup>
 
                 <InputGroup className="form__item" size={"md"}>
-                  <FormLabel htmlFor="file">Product Image:</FormLabel>
+                  <FormLabel htmlFor="file">
+                    Product Image: <span className="required">*</span>
+                  </FormLabel>
                   <Input
                     type="file"
                     className="file__input"
@@ -195,6 +236,9 @@ const AddProducts = () => {
                     multiple
                     onChange={productImageChange}
                   />
+                  {errors.imagesPreview && (
+                    <p className="span_text">{errors.imagesPreview}</p>
+                  )}
                 </InputGroup>
 
                 <div id="productImagePreview">
