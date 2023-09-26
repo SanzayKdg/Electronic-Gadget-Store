@@ -14,8 +14,19 @@ export const createProductAsync = createAsyncThunk(
 // Get all Products
 export const getAllProductsAsync = createAsyncThunk(
   "products/get-all-products",
-  async () => {
-    const response = await api1.get("/admin/products");
+  async ({
+    keyword = "",
+    currentPage = 1,
+    price = [0, 300000],
+    category,
+    ratings = 0,
+  }) => {
+    let link = `/admin/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+
+    if (category) {
+      link = `/admin/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
+    }
+    const response = await api1.get(link);
     return response.data;
   }
 );
@@ -94,6 +105,8 @@ export const productSlice = createSlice({
       .addCase(getAllProductsAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.products = action.payload.products;
+        state.productCount = action.payload.productCount;
+        state.resultPerPage = action.payload.resultPerPage;
       })
       .addCase(getAllProductsAsync.rejected, (state, action) => {
         state.loading = false;

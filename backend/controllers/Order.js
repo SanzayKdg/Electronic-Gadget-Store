@@ -1,5 +1,6 @@
 import { Order } from "../models/Order.js";
 import { Product } from "../models/Product.js";
+import ApiFeatures from "../utils/ApiFeatures.js";
 import { sendMail } from "../utils/SendMail.js";
 
 // create a new order -- User
@@ -108,7 +109,14 @@ export const myOrders = async (req, res, next) => {
 // get all orders -- admin
 export const allOrdersAdmin = async (req, res, next) => {
   try {
-    const orders = await Order.find();
+    const resultPerPage = 10;
+    const orderCount = await Order.countDocuments();
+    const apiFeature = new ApiFeatures(Order.find(), req.query)
+      .search()
+      .filter()
+      .pagination(resultPerPage);
+    const orders = await apiFeature.query;
+
     let totalAmount = 0;
 
     //   calculating all the ordered products price of the user
@@ -119,6 +127,8 @@ export const allOrdersAdmin = async (req, res, next) => {
     res.status(200).json({
       success: true,
       orders,
+      orderCount,
+      resultPerPage,
       totalAmount,
     });
   } catch (error) {

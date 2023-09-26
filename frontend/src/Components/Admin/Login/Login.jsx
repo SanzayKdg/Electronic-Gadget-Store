@@ -33,16 +33,13 @@ const Login = () => {
   const loginHandler = (e) => {
     e.preventDefault();
     const validationErrors = loginDataValidation(email, password);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+   
     if (email === "" || password === "") {
       alert.error("Fill all the required fields.");
     } else if (email !== user?.email || password !== user?.password) {
       alert.error("invalid credentials");
     }
-    setErrors(validationErrors);
+
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);

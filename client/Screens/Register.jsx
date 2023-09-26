@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerAsync } from "../features/authSlice";
 import mime from "mime";
 import Loader from "../Components/Loader";
+import { userDataValidation } from "../Error/error";
 const Register = ({ nav, route }) => {
   const navigation = useNavigation();
   const [formSent, setFormSent] = useState(false);
@@ -24,6 +25,8 @@ const Register = ({ nav, route }) => {
   const [password, setPassword] = useState("");
   const [contact, setContact] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [errors, setErrors] = useState({});
+
   const dispatch = useDispatch();
   const { loading, success, message, error } = useSelector(
     (state) => state.auth
@@ -41,6 +44,17 @@ const Register = ({ nav, route }) => {
   }, [route]);
 
   const registerHandler = () => {
+    const validationErrors = userDataValidation(
+      name,
+      email,
+      contact,
+      password,
+      avatar
+    );
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     const myForm = new FormData();
     myForm.append("name", name);
     myForm.append("email", email);
@@ -69,65 +83,85 @@ const Register = ({ nav, route }) => {
 
   return (
     <ScrollView style={registerStyle.registerScroll}>
-      <View style={registerStyle.registerContainer}>
-        <Avatar.Image
-          size={100}
-          source={{ uri: avatar ? avatar : null }}
-          style={{ backgroundColor: "#FF6347" }}
-        />
-
-        <TouchableOpacity onPress={handleImage}>
-          <Text style={{ color: "#FF6347", marginTop: 10 }}>Change Photo</Text>
-        </TouchableOpacity>
-
-        <View style={{ width: "70%" }}>
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Name"
-            value={name}
-            onChangeText={setName}
-            inputMode="text"
+      {loading ? (
+        <Loader />
+      ) : (
+        <View style={registerStyle.registerContainer}>
+          <Avatar.Image
+            size={100}
+            source={{ uri: avatar ? avatar : null }}
+            style={{ backgroundColor: "#FF6347" }}
           />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            inputMode="email"
-          />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Contact"
-            value={contact}
-            onChangeText={setContact}
-            inputMode="decimal"
-            maxLength={10}
-          />
-          <TextInput
-            style={registerStyle.input}
-            placeholder="Password"
-            value={password}
-            inputMode="text"
-            secureTextEntry={true}
-            onChangeText={setPassword}
-          />
-        </View>
 
-        <Button
-          style={registerStyle.btn}
-          onPress={registerHandler}
-          disabled={!email || !password || !name}
-        >
-          <Text style={{ color: "#fff" }}>Register</Text>
-        </Button>
-
-        <View style={{ marginVertical: 20, flexDirection: "row" }}>
-          <Text>Already a User?</Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-            <Text style={registerStyle.login}> Login</Text>
+          {errors.avatar && (
+            <Text style={registerStyle.errorMsg}>{errors.avatar}</Text>
+          )}
+          <TouchableOpacity onPress={handleImage}>
+            <Text style={{ color: "#FF6347", marginTop: 10 }}>
+              Change Photo
+            </Text>
           </TouchableOpacity>
+
+          <View style={{ width: "70%" }}>
+            <TextInput
+              style={registerStyle.input}
+              placeholder="Name"
+              value={name}
+              onChangeText={setName}
+              inputMode="text"
+            />
+            {errors.name && (
+              <Text style={registerStyle.errorMsg}>{errors.name}</Text>
+            )}
+
+            <TextInput
+              style={registerStyle.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              inputMode="email"
+            />
+            {errors.email && (
+              <Text style={registerStyle.errorMsg}>{errors.email}</Text>
+            )}
+
+            <TextInput
+              style={registerStyle.input}
+              placeholder="Contact"
+              value={contact}
+              onChangeText={setContact}
+              inputMode="decimal"
+              maxLength={10}
+            />
+            {errors.contact && (
+              <Text style={registerStyle.errorMsg}>{errors.contact}</Text>
+            )}
+
+            <TextInput
+              style={registerStyle.input}
+              placeholder="Password"
+              value={password}
+              inputMode="text"
+              secureTextEntry={true}
+              onChangeText={setPassword}
+            />
+            {errors.password && (
+              <Text style={registerStyle.errorMsg}>{errors.password}</Text>
+            )}
+          </View>
+
+          <Button style={registerStyle.btn} onPress={registerHandler}>
+            <Text style={{ color: "#fff" }}>Register</Text>
+          </Button>
+
+          <View style={{ marginVertical: 20, flexDirection: "row" }}>
+            <Text>Already a User?</Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+              <Text style={registerStyle.login}> Login</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      )}
     </ScrollView>
   );
 };
@@ -168,5 +202,9 @@ const registerStyle = StyleSheet.create({
   },
   login: {
     color: "#FF6347",
+  },
+  errorMsg: {
+    color: "#DC4C64",
+    marginBottom: 5,
   },
 });

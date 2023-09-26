@@ -6,19 +6,42 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
+  ToastAndroid,
+  ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAsync } from "../features/authSlice";
+import { loginDataValidation } from "../Error/error";
 
 const Login = ({ navigation }) => {
-  const { isAuthenticated, error } = useSelector((state) => state.auth);
-  const { message } = useSelector((state) => state.user);
+  const { isAuthenticated, error, user } = useSelector((state) => state.auth);
+  // const { user } = useSelector((state) => state.user);
 
+  const [emailErrors, setEmailErrors] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
+
+  //validation functions
+  const emailValidation = () => {
+    if (email === "") {
+      setEmailErrors("Email is required");
+    } else {
+      setEmailErrors("");
+    }
+  };
+  const passwordValidation = () => {
+    if (password === "") {
+      setPasswordErrors("Password is required");
+    } else {
+      setPasswordErrors("");
+    }
+  };
+
+  // Login Handler
   const loginHandler = () => {
     dispatch(loginAsync({ email, password }));
   };
@@ -31,56 +54,80 @@ const Login = ({ navigation }) => {
     if (isAuthenticated) {
       navigation.navigate("Account");
     }
-  }, [error, dispatch, navigation, isAuthenticated]);
+  }, [error, dispatch, navigation, email, isAuthenticated]);
 
   return (
-    <View style={loginStyle.loginContainer}>
-      <View style={{ width: "70%" }}>
-        <TextInput
-          style={loginStyle.input}
-          placeholder="Email"
-          value={email}
-          onChangeText={setEmail}
-          inputMode="email"
-        />
-        <TextInput
-          secureTextEntry
-          style={loginStyle.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          inputMode="text"
-        />
-      </View>
-      <Button
-        disabled={!email || !password}
-        style={loginStyle.btn}
-        onPress={loginHandler}
-      >
-        <Text style={{ color: "#fff" }}>Login</Text>
-      </Button>
-      <Text style={{ marginTop: 20 }}>Or</Text>
+    <ScrollView style={loginStyle.scrollViewContainer}>
+      <Text style={loginStyle.loginHeader}>LOGIN</Text>
+      <View style={loginStyle.loginContainer}>
+        <View style={{ width: "70%" }}>
+          <TextInput
+            style={loginStyle.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            inputMode="email"
+            onBlur={emailValidation}
+          />
+          {emailErrors && (
+            <Text style={{ color: "#DC4C64", marginBottom: 5 }}>
+              {emailErrors}
+            </Text>
+          )}
+          <TextInput
+            secureTextEntry
+            style={loginStyle.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            inputMode="text"
+            onBlur={passwordValidation}
+          />
+          {passwordErrors && (
+            <Text style={{ color: "#DC4C64", marginBottom: 5 }}>
+              {passwordErrors}
+            </Text>
+          )}
+        </View>
+        <Button style={loginStyle.btn} onPress={loginHandler}>
+          <Text style={{ color: "#fff" }}>Login</Text>
+        </Button>
+        <Text style={{ marginTop: 20 }}>Or</Text>
 
-      <Text style={{ marginTop: 20 }}>Don't Have an account?</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-        <Text style={loginStyle.signUp}>Register</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
-        {/* <Text style={loginStyle.forgot}>Forgot Password?</Text> */}
-      </TouchableOpacity>
-    </View>
+        <Text style={{ marginTop: 20 }}>Don't Have an account?</Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+          <Text style={loginStyle.signUp}>Register</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("ForgotPassword")}>
+          {/* <Text style={loginStyle.forgot}>Forgot Password?</Text> */}
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 };
 
 export default Login;
 
 const loginStyle = StyleSheet.create({
-  loginContainer: {
+  scrollViewContainer: {
     backgroundColor: "#FFF",
     flex: 1,
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+
+  loginHeader: {
+    marginTop: 150,
+    textAlign: "center",
+    fontSize: 30,
+    fontWeight: 600,
+    marginBottom: 20,
+  },
+  loginContainer: {
+    backgroundColor: "#FFF",
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    width: "100%",
   },
 
   input: {
@@ -98,6 +145,7 @@ const loginStyle = StyleSheet.create({
     padding: 5,
     width: "70%",
     borderRadius: 0,
+    marginVertical: 10,
   },
   signUp: {
     color: "#FF6347",

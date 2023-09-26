@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { api, api2 } from "./api/api";
+import { api, api1, api2 } from "./api/api";
 
 // ----------- ACTION STARTS HERE --------------
 
@@ -16,7 +16,7 @@ export const registerAsync = createAsyncThunk(
 export const loginAsync = createAsyncThunk(
   "auth/login",
   async ({ email, password }) => {
-    const response = await api.post("/login", { email, password });
+    const response = await api1.post("/login", { email, password });
     return response.data;
   }
 );
@@ -35,7 +35,7 @@ export const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: {},
-    loading: true,
+    loading: false,
     error: null,
     isAuthenticated: false,
   },

@@ -8,8 +8,8 @@
 
 }
 
-.viewOrderDetail{
-    color : #0275d8;
+.viewOrderDetail {
+    color: #0275d8;
     /* text-decoration:  underline; */
 }
 
@@ -43,33 +43,34 @@
 }
 
 
-.tableActionBtn{
+.tableActionBtn {
     display: flex;
-    align-items: center ;
-    justify-content: center ;
+    align-items: center;
+    justify-content: center;
 }
 
-.linkIcon{
+.linkIcon {
     width: 2.5vw;
     height: 5vh;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .orderIcon {
     color: rgb(94, 94, 94);
 }
 
 .orderGreen {
-    color: #14A44D ;
+    color: #14A44D;
 }
 
 .orderRed {
-    color: #DC4C64 ;
+    color: #DC4C64;
 }
 
 .reviewYellow {
-    color: #f0ad4e ;
+    color: #f0ad4e;
 }
 
 .reviewBlue {
@@ -79,4 +80,16 @@
 
 .orderHide {
     display: none !important;
+}
+
+.order__searchContainer {
+    width: 30rem;
+}
+
+.orderInput {
+    width: 20rem !important;
+}
+
+.orderFilter{
+    width: 70rem;
 }

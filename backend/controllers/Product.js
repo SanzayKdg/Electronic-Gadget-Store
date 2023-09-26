@@ -45,7 +45,13 @@ export const createProduct = async (req, res, next) => {
 // get all products -- admin
 export const getProductsAdmin = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const resultPerPage = 10;
+    const productCount = await Product.countDocuments();
+    const apiFeature = new ApiFeatures(Product.find(), req.query)
+      .search()
+      .filter()
+      .pagination(resultPerPage);
+    const products = await apiFeature.query;
 
     if (!products) {
       return next(
@@ -54,6 +60,8 @@ export const getProductsAdmin = async (req, res, next) => {
     }
     res.status(200).json({
       products,
+      productCount,
+      resultPerPage,
     });
   } catch (error) {
     res.status(500).json({

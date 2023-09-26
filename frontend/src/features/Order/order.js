@@ -7,8 +7,25 @@ import { api, api1 } from "../Api/api";
 
 export const getAllOrdersAsync = createAsyncThunk(
   "orders/get-all-orders",
-  async () => {
-    const response = await api1.get("/admin/orders");
+  async ({
+    keyword = "",
+    currentPage = 1,
+    price = [0, 300000],
+    orderStatus = "",
+    method = "card",
+  }) => {
+    let link = `/admin/orders?keyword=${keyword}&page=${currentPage}&totalPrice[gte]=${price[0]}&totalPrice[lte]=${price[1]}`;
+
+    if (orderStatus) {
+      link = `/admin/orders?keyword=${keyword}&page=${currentPage}&totalPrice[gte]=${price[0]}&totalPrice[lte]=${price[1]}&orderStatus=${orderStatus}`;
+    }
+    if (method) {
+      link = `/admin/orders?keyword=${keyword}&page=${currentPage}&totalPrice[gte]=${price[0]}&totalPrice[lte]=${price[1]}&paymentInfo.method=${method}`;
+    }
+    if (orderStatus && method) {
+      link = `/admin/orders?keyword=${keyword}&page=${currentPage}&totalPrice[gte]=${price[0]}&totalPrice[lte]=${price[1]}&orderStatus=${orderStatus}&paymentInfo.method=${method}`;
+    }
+    const response = await api1.get(link);
     return response.data;
   }
 );
@@ -54,6 +71,7 @@ export const orderSlice = createSlice({
     loading: false,
     error: null,
     success: false,
+    orderCount: 0,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -64,6 +82,8 @@ export const orderSlice = createSlice({
       .addCase(getAllOrdersAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.orders = action.payload.orders;
+        state.orderCount = action.payload.orderCount;
+        state.resultPerPage = action.payload.resultPerPage;
       })
       .addCase(getAllOrdersAsync.rejected, (state, action) => {
         state.loading = false;
