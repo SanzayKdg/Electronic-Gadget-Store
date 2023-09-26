@@ -16,8 +16,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import { useDispatch, useSelector } from "react-redux";
 import { useAlert } from "react-alert";
-import Loader from "../../Layout/Loader/Loader";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Select } from "@chakra-ui/react";
 import {
   deleteProductAsync,
@@ -64,7 +63,6 @@ const AllProducts = () => {
   };
 
   const {
-    loading,
     products,
     error,
     success: deleteSuccess,
@@ -143,6 +141,7 @@ const AllProducts = () => {
               <legend className="filter_legend">Filter By Category</legend>
               <Select
                 className="selectCats"
+                value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value={""}>Select Category</option>

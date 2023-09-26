@@ -4,10 +4,18 @@ import { api, api1, api2 } from "../Api/api";
 // ----------- ACTION STARTS HERE --------------
 
 // Get All User Action
-export const getAllUserAsync = createAsyncThunk("users/all", async () => {
-  const response = await api1.get("/admin/users");
-  return response.data;
-});
+export const getAllUserAsync = createAsyncThunk(
+  "users/all",
+  async ({ keyword = "", role, currentPage = 1 }) => {
+    let link = `/admin/users?keyword=${keyword}&page=${currentPage}`;
+
+    if (role) {
+      link = `/admin/users?keyword=${keyword}&page=${currentPage}&role=${role}`;
+    }
+    const response = await api1.get(link);
+    return response.data;
+  }
+);
 
 // Get Single User Action
 export const getUserAsync = createAsyncThunk(
@@ -47,6 +55,8 @@ export const userSlice = createSlice({
     loading: true,
     error: null,
     success: false,
+    userCount: 0,
+    resultPerPage: 0,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -57,6 +67,8 @@ export const userSlice = createSlice({
       .addCase(getAllUserAsync.fulfilled, (state, action) => {
         state.loading = false;
         state.users = action.payload.users;
+        state.userCount = action.payload.userCount;
+        state.resultPerPage = action.payload.resultPerPage;
       })
       .addCase(getAllUserAsync.rejected, (state, action) => {
         state.loading = false;

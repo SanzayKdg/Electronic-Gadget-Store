@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import ApiFeatures from "../utils/ApiFeatures.js";
 import { sendMail } from "../utils/SendMail.js";
 import sendToken from "../utils/SendToken.js";
 import cloudinary from "cloudinary";
@@ -159,8 +160,15 @@ export const myProfile = async (req, res, next) => {
 // get all users -- admin
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find();
-    res.status(200).json({ users });
+    const resultPerPage = 10;
+    const userCount = await User.countDocuments();
+    const apiFeature = new ApiFeatures(User.find(), req.query)
+      .filter()
+      .search()
+      .pagination(resultPerPage);
+
+    const users = await apiFeature.query;
+    res.status(200).json({ users, userCount, resultPerPage });
   } catch (error) {
     res.status(500).json({
       success: false,
