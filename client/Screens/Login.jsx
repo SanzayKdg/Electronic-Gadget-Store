@@ -6,18 +6,15 @@ import {
   TouchableOpacity,
   StatusBar,
   Platform,
-  ToastAndroid,
   ScrollView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { loginAsync } from "../features/authSlice";
-import { loginDataValidation } from "../Error/error";
 
 const Login = ({ navigation }) => {
   const { isAuthenticated, error, user } = useSelector((state) => state.auth);
-  // const { user } = useSelector((state) => state.user);
 
   const [emailErrors, setEmailErrors] = useState("");
   const [passwordErrors, setPasswordErrors] = useState("");

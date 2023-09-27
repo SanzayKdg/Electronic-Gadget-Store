@@ -16,7 +16,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { getMyWishlist, removeFromWishlist } from "../features/wishlistSlice";
 import Login from "./Login";
 import Loader from "../Components/Loader";
+import { useNavigation } from "@react-navigation/core";
+
 const Wishlist = () => {
+  const navigation = useNavigation();
+
   const { wishlists, loading, error } = useSelector((state) => state.wishlist);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -104,12 +108,12 @@ const Wishlist = () => {
                               <Text> | </Text>
                               <Text
                                 style={
-                                  item.product.stock === 0
+                                  item.product.stock <= 0
                                     ? wishlistStyle.outOfStock
                                     : wishlistStyle.inStock
                                 }
                               >
-                                {item.product.stock === 0
+                                {item.product.stock <= 0
                                   ? "Out Of Stock"
                                   : "In Stock"}
                               </Text>
@@ -120,6 +124,11 @@ const Wishlist = () => {
                             name="chevron-right"
                             size={30}
                             color={"#0009"}
+                            onPress={() =>
+                              navigation.navigate("Product", {
+                                id: item.product_id,
+                              })
+                            }
                           />
                         </View>
                       ))}

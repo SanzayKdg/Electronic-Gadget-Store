@@ -5,10 +5,24 @@ import { api } from "./api/api";
 
 // get all products action
 
-export const getAllProducts = createAsyncThunk("products/all", async () => {
-  const response = await api.get("/products");
-  return response.data;
-});
+export const getAllProducts = createAsyncThunk(
+  "products/all",
+  async ({ keyword = "", price = [0, 300000], category, ratings = 0 }) => {
+    let link = `/products?keyword=${
+      keyword === undefined ? "" : keyword
+    }&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
+
+    if (category) {
+      link = `/products?keyword=${
+        keyword === undefined ? "" : keyword
+      }&price[gte]=${price[0]}&price[lte]=${
+        price[1]
+      }&category=${category}&ratings[gte]=${ratings}`;
+    }
+    const response = await api.get(link);
+    return response.data;
+  }
+);
 
 // get single product action
 

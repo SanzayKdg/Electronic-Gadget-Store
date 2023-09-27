@@ -58,8 +58,16 @@ const ProductDetail = ({ navigation, route }) => {
       alert("Please login first");
       navigation.navigate("Login");
     }
-    dispatch(addToCart(cartItem));
-    setCartSent(true);
+    if (product.stock <= 0) {
+      ToastAndroid.show(
+        "Out of Stock. Please Try Again Later",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+    } else {
+      dispatch(addToCart(cartItem));
+      setCartSent(true);
+    }
   };
 
   const addWishList = async () => {
@@ -77,7 +85,6 @@ const ProductDetail = ({ navigation, route }) => {
     }
 
     dispatch(addToWishlist(wishlist_item));
-    // dispatch(getSingleProduct(id));
     dispatch(getMyWishlist(user._id));
     setItemSent(true);
   };

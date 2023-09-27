@@ -251,19 +251,14 @@ export const getAllreviews = async (req, res, next) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const resutlPerPage = 4;
-    const productsCount = await Product.countDocuments();
     const apiFeatures = new ApiFeatures(Product.find(), req.query)
       .search()
-      .filter()
-      .pagination(resutlPerPage);
+      .filter();
 
     const products = await apiFeatures.query;
     res.status(200).json({
       success: true,
       products,
-      resutlPerPage,
-      productsCount,
     });
   } catch (error) {
     res.status(500).json({

@@ -1,12 +1,3 @@
-// email,
-// contact,
-// address,
-// province,
-// city,
-// zipcode,
-// cart,
-// user,
-
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api1 } from "./api/api";
 

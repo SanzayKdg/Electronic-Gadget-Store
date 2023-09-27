@@ -67,7 +67,7 @@ const Account = ({ navigation }) => {
                         </Text>
                         <Text style={accountStyle.textItems}>{user.email}</Text>
                         <Text style={accountStyle.textItems}>
-                          {user.contact}
+                          +977 {user.contact}
                         </Text>
                         <Text style={accountStyle.textItems1}>
                           User Since: {user.createdAt?.slice(0, 4)}
@@ -250,6 +250,7 @@ const accountStyle = StyleSheet.create({
     marginRight: 20,
     height: 100,
     width: 100,
+    borderRadius: 360,
   },
 
   midSection: {

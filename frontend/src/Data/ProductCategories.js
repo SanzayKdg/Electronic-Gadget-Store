@@ -2,7 +2,7 @@
 export const smartPhones = [
     "Samsung",
     "Apple",
-    "Xiaomi",
+    "Redmi",
     "One Plus",
     "Oppo",
     "Vivo",

@@ -1,16 +1,29 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
-import React from "react";
+import { View, StyleSheet, TextInput } from "react-native";
+import React, { useState } from "react";
 import Search from "react-native-vector-icons/EvilIcons";
 import { Button } from "react-native-paper";
+import { useNavigation } from "@react-navigation/core";
+
 const Header = () => {
-  const searchHandler = (e) => {
-    console.log("Search");
+  const navigation = useNavigation();
+  const [keyword, setKeyword] = useState("");
+  const searchHandler = () => {
+    if (keyword.trim()) {
+      navigation.navigate("Products", { keyword: keyword });
+    } else {
+      navigation.navigate("Products");
+    }
   };
   return (
     <View style={headerStyle.headerContainer}>
       <View style={headerStyle.headerFormContainer}>
         <Search name="search" size={30} />
-        <TextInput style={headerStyle.searchInput} placeholder="Search" />
+        <TextInput
+          style={headerStyle.searchInput}
+          value={keyword}
+          onChangeText={setKeyword}
+          placeholder={"Search"}
+        />
       </View>
       <Button
         style={headerStyle.searchBtn}
@@ -30,6 +43,7 @@ const headerStyle = StyleSheet.create({
     backgroundColor: "#fff",
     flexDirection: "row",
     padding: 10,
+    marginTop: 5,
   },
   headerFormContainer: {
     borderWidth: 1,

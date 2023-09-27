@@ -5,16 +5,34 @@ import {
   ScrollView,
   StyleSheet,
   StatusBar,
+  Image,
   Platform,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import { Rating } from "react-native-elements";
+import React, { useEffect, useState } from "react";
 import { images } from "./imagesLink";
 import Header from "../Components/Header";
 import { brandCategory } from "./categories";
 import Carousel from "./Carousel";
-
+import { useNavigation } from "@react-navigation/core";
+import { Card } from "react-native-paper";
+import Loader from "../Components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProducts } from "../features/productSlice";
 const Home = () => {
+  const navigation = useNavigation();
+  const { products, loading, error } = useSelector((state) => state.product);
+  const displayedProducts = products.slice(0, 6);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (error) {
+      alert(error);
+    }
+
+    dispatch(getAllProducts({}));
+  }, [dispatch, error]);
+
   return (
     <View style={homeStyle.homeContainer}>
       <ScrollView>
@@ -25,6 +43,69 @@ const Home = () => {
             <Carousel images={images} />
           </View>
         </SafeAreaView>
+
+        <View style={homeStyle.categoriesContainer}>
+          <Text style={homeStyle.categoriesHeader}>Popular Brands</Text>
+          <View style={homeStyle.categories}>
+            {brandCategory.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  navigation.navigate("Products", {
+                    category: item.title,
+                  });
+                }}
+              >
+                <View style={homeStyle.categoriesCard}>
+                  <Image
+                    style={homeStyle.categoriesImage}
+                    source={{ uri: item.uri }}
+                  />
+                  <Text>{item.title}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+        <View style={homeStyle.categoriesContainer}>
+          {/* Featred Products -- Later display by Algorithm */}
+          <Text style={homeStyle.categoriesHeader}>Featured Products</Text>
+
+          {loading ? (
+            <Loader />
+          ) : (
+            <View style={homeStyle.products}>
+              {displayedProducts &&
+                displayedProducts?.map((item, index) => (
+                  <Card
+                    onPress={() =>
+                      navigation.navigate("Product", { id: item._id })
+                    }
+                    key={index}
+                    style={homeStyle.cardView}
+                  >
+                    <Image
+                      style={homeStyle.productImage}
+                      source={{ uri: item.images[0].url }}
+                    />
+                    <View style={homeStyle.productDesc}>
+                      <Text style={homeStyle.productDescItem}>{item.name}</Text>
+                      <Text style={homeStyle.productDescItem}>
+                        {item.price}
+                      </Text>
+                      <Rating
+                        startingValue={item.ratings}
+                        ratingCount={5}
+                        imageSize={25}
+                        style={homeStyle.productDescItem}
+                        readonly
+                      />
+                    </View>
+                  </Card>
+                ))}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );
@@ -45,14 +126,63 @@ const homeStyle = StyleSheet.create({
     flex: 1,
     marginTop: 20,
   },
-
+  categoriesHeader: {
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "600",
+    marginTop: 10,
+    marginBottom: 20,
+  },
   categoriesContainer: {
     marginVertical: 5,
-    borderWidth: 2,
     padding: 10,
+    backgroundColor: "#fff",
+  },
+  categories: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+    marginVertical: 10,
+  },
+  categoriesCard: {
+    marginTop: 20,
+    marginBottom: 10,
+    borderColor: "#a8a8a8",
+    borderWidth: 0.5,
+    padding: 5,
+    alignItems: "center",
   },
 
-  imageCard: {
-    width: "100%",
+  categoriesImage: {
+    height: 80,
+    width: 110,
+  },
+  products: {
+    marginVertical: 20,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    flexWrap: "wrap",
+    paddingBottom: 30,
+  },
+  cardView: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "45%",
+    padding: 10,
+    marginVertical: 5,
+    backgroundColor: "#fff",
+  },
+  productImage: {
+    width: 150,
+    height: 150,
+  },
+  productDesc: {
+    marginTop: 10,
+    alignItems: "center",
+  },
+  productDescItem: {
+    marginTop: 10,
   },
 });
