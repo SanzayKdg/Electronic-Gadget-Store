@@ -17,6 +17,31 @@ import Loader from "../Components/Loader";
 import { getProfileAsync, updateProfileAsync } from "../features/userSlice";
 import mime from "mime";
 const UpdateProfile = ({ nav, route }) => {
+  const [nameErrors, setNameErrors] = useState("");
+  const [emailErrors, setEmailErrors] = useState("");
+  const [contactErrors, setContactErrors] = useState("");
+
+  const nameValidation = () => {
+    if (name === "") {
+      setNameErrors("Name is required");
+    } else {
+      setNameErrors("");
+    }
+  };
+  const emailValidation = () => {
+    if (email === "") {
+      setEmailErrors("Email is required");
+    } else {
+      setEmailErrors("");
+    }
+  };
+  const contactValidation = () => {
+    if (contact === "") {
+      setContactErrors("Contact no. is required");
+    } else {
+      setContactErrors("");
+    }
+  };
   const { user, loading, success, error, message } = useSelector(
     (state) => state.user
   );
@@ -57,17 +82,6 @@ const UpdateProfile = ({ nav, route }) => {
         ToastAndroid.BOTTOM
       );
     }
-    // const myForm = {
-    //   name,
-    //   email,
-    //   contact,
-    //   avatar: {
-    //     uri: avatar,
-    //     type: mime.getType(avatar),
-    //     name: avatar.split("/").pop(),
-    //   },
-    // };
-
     dispatch(updateProfileAsync({ myForm }));
     await dispatch(getProfileAsync());
     setFormSent(true);
@@ -113,19 +127,31 @@ const UpdateProfile = ({ nav, route }) => {
                 placeholder="Name"
                 value={name}
                 onChangeText={setName}
+                onBlur={nameValidation}
               />
+              {nameErrors && (
+                <Text style={updateProfileStyle.errorMsg}>{nameErrors}</Text>
+              )}
               <TextInput
                 style={updateProfileStyle.input}
                 placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
+                onBlur={emailValidation}
               />
+              {emailErrors && (
+                <Text style={updateProfileStyle.errorMsg}>{emailErrors}</Text>
+              )}
               <TextInput
                 style={updateProfileStyle.input}
                 placeholder="Contact"
                 value={contact}
                 onChangeText={setContact}
+                onBlur={contactValidation}
               />
+              {contactErrors && (
+                <Text style={updateProfileStyle.errorMsg}>{contactErrors}</Text>
+              )}
             </View>
 
             <Button
@@ -181,5 +207,9 @@ const updateProfileStyle = StyleSheet.create({
   },
   login: {
     color: "#FF6347",
+  },
+  errorMsg: {
+    color: "#DC4C64",
+    marginBottom: 5,
   },
 });

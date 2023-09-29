@@ -11,15 +11,16 @@ import {
 } from "react-native";
 import { Rating } from "react-native-elements";
 import React, { useEffect, useState } from "react";
-import { images } from "./imagesLink";
+import { images } from "../extras/imagesLink";
 import Header from "../Components/Header";
-import { brandCategory } from "./categories";
-import Carousel from "./Carousel";
+import { brandCategory } from "../extras/categories";
+import Carousel from "../Components/Carousel";
 import { useNavigation } from "@react-navigation/core";
 import { Card } from "react-native-paper";
 import Loader from "../Components/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../features/productSlice";
+import CardCarousel from "../Components/CardCarousel";
 const Home = () => {
   const navigation = useNavigation();
   const { products, loading, error } = useSelector((state) => state.product);

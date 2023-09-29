@@ -1,7 +1,7 @@
 Client Screens
 
-Products -- 50% Done
-ProductDetail -- 70% Done
+Products -- 100%% Done
+ProductDetail -- 100% Done
 Register -- 100% Done
 Login -- 100% Done
 Account -- 100% Done
@@ -14,22 +14,22 @@ Payment Details -- Done 100%
 Update Profile -- Done 100%
 Change Password -- Done 100%
 Messages -- UI only Done
-My Orders -- UI only Done
-Wishlists -- UI only Done
+My Orders -- 100 % DONE
+Wishlists -- 100% DONE
 Cart -- Done 100%
 
 TODO
 1. Products
-a. Filter logic
+a. Filter logic -- 100% DONE
 b. algorithm
-c. search functionality
+c. search functionality -- 100% DONE
 
 2. Product Detail
 a. Submit Review & Rating
 b. View Reviews and Rating in a carousel
 
 3. Home Screen 
-a. Brands Category
+a. Brands Category -- 100% DONE
 b. Featured Products --> by Algorithm
 
 4. User Orders -- Done 100%
@@ -40,4 +40,8 @@ c. Remove from wish list -- Done 100%
 
 
 Todo
-form validation
+form validation --> UPDATE , REGISTER , CHANGE PASSWORD --- 100% DONE
+Submit Review & Rating -- 100% DONE
+View Reviews and Rating in a carousel -- 100% DONE
+Featured Products --> by Algorithm
+algorithm

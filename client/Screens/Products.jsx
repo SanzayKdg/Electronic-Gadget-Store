@@ -14,7 +14,7 @@ import Header from "../Components/Header";
 import { Slider, Icon } from "@rneui/base";
 import { ListItem } from "@rneui/themed";
 import { Rating } from "react-native-elements";
-import { laptops, smartphones } from "./categories";
+import { laptops, smartphones } from "../extras/categories";
 import { Card } from "react-native-paper";
 import Filter from "react-native-vector-icons/AntDesign";
 import { useDispatch, useSelector } from "react-redux";

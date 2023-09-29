@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
-import Carousel from "./Carousel";
 import Wishlist from "react-native-vector-icons/AntDesign";
 import { Rating } from "react-native-elements";
 import { Button, Dialog } from "react-native-paper";
@@ -25,27 +24,60 @@ import {
   getMyWishlist,
   removeFromWishlist,
 } from "../features/wishlistSlice";
-
+import { getReviewsAsync, newReviewAsync } from "../features/reviewSlice";
+import Carousel from "../Components/Carousel";
+import CardCarousel from "../Components/CardCarousel";
 const ProductDetail = ({ navigation, route }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [itemSent, setItemSent] = useState(false);
   const [cartSent, setCartSent] = useState(false);
-
-  const openDialogHandler = () => {
-    setOpenDialog(!openDialog);
-  };
+  const [reviewAdded, setReviewAdded] = useState(false);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0);
 
   const { id } = route.params;
 
   const { loading, product, error } = useSelector((state) => state.product);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { success } = useSelector((state) => state.cart);
+  const { reviews, success: reviewSuccess } = useSelector(
+    (state) => state.review
+  );
   const {
     error: wishlist_error,
     wishlists,
     success: wishlist_success,
   } = useSelector((state) => state.wishlist);
   const dispatch = useDispatch();
+
+  const openDialogHandler = () => {
+    setOpenDialog(!openDialog);
+  };
+  const submitReviewHandler = () => {
+    if (!isAuthenticated) {
+      alert("Please login first");
+      navigation.navigate("Login");
+    }
+    if (rating === 0 || comment === "") {
+      ToastAndroid.show(
+        "Please fill all the fields",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+    }
+    const reviewData = {
+      comment,
+      rating,
+      productId: id,
+    };
+    dispatch(newReviewAsync(reviewData));
+    setReviewAdded(true);
+    setOpenDialog(false);
+    setTimeout(() => {
+      dispatch(getSingleProduct(id));
+      dispatch(getReviewsAsync(id));
+    }, 500);
+  };
 
   const addToCartHandler = () => {
     const cartItem = {
@@ -111,8 +143,8 @@ const ProductDetail = ({ navigation, route }) => {
       );
       setCartSent(false);
     }
-
     dispatch(getSingleProduct(id));
+    dispatch(getReviewsAsync(id));
   }, [dispatch, id, error, success, cartSent]);
 
   useEffect(() => {
@@ -127,6 +159,15 @@ const ProductDetail = ({ navigation, route }) => {
       );
       setItemSent(false);
     }
+
+    if (reviewAdded === true && reviewSuccess) {
+      ToastAndroid.show(
+        "Submitted Review",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
+      setReviewAdded(false);
+    }
   }, [wishlist_error, wishlist_success, itemSent, ToastAndroid]);
 
   const isProductInWishlist = wishlists?.some((wishlistItem) => {
@@ -134,7 +175,7 @@ const ProductDetail = ({ navigation, route }) => {
   });
 
   return (
-    <View style={productStyle.productContainer}>
+    <ScrollView style={productStyle.productContainer}>
       {loading ? (
         <Loader />
       ) : (
@@ -221,42 +262,75 @@ const ProductDetail = ({ navigation, route }) => {
               </View>
             </View>
 
-            <Dialog visible={openDialog} onDismiss={openDialogHandler}>
-              <Dialog.Title>Submit Review</Dialog.Title>
-              <Dialog.Content>
-                <TextInput
-                  style={productStyle.input}
-                  placeholder="Comment"
-                  // value={description}
-                  // onChangeText={setDescription}
-                />
-
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <TouchableOpacity onPress={openDialogHandler}>
-                    <Text>Cancel</Text>
-                  </TouchableOpacity>
-
-                  <Button
-                    // disabled={!title || !description}
-                    // onPress={submitReviewHandler}
-                    textColor="#900"
-                  >
-                    Add
-                  </Button>
-                </View>
-              </Dialog.Content>
-            </Dialog>
-
+            <CardCarousel reviews={reviews} />
             <Button
               onPress={addToCartHandler}
               style={productStyle.addToCartBtn}
             >
               <Text style={productStyle.addToCartBtnTxt}>Add to Cart</Text>
             </Button>
+
+            <Dialog
+              style={productStyle.reviewDialog}
+              visible={openDialog}
+              onDismiss={openDialogHandler}
+            >
+              <Dialog.Title>Submit Review</Dialog.Title>
+              <Dialog.Content>
+                <TextInput
+                  style={productStyle.input}
+                  placeholder="Write a Review"
+                  multiline={true}
+                  numberOfLines={5}
+                  value={comment}
+                  onChangeText={setComment}
+                />
+                <View
+                  style={{
+                    flexDirection: "row",
+                  }}
+                >
+                  <Text>Rate this product: </Text>
+                  <Rating
+                    startingValue={rating}
+                    ratingCount={5}
+                    imageSize={25}
+                    fractions={2}
+                    style={productStyle.productRating}
+                    onFinishRating={(value) => {
+                      const roundedRating = Math.round(value * 2) / 2;
+                      setRating(roundedRating);
+                    }}
+                  />
+                  <Text>{rating} / 5</Text>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginTop: 30,
+                  }}
+                >
+                  <TouchableOpacity
+                    style={productStyle.cancelBtn}
+                    onPress={openDialogHandler}
+                  >
+                    <Text style={productStyle.reviewBtnTxt}>Cancel</Text>
+                  </TouchableOpacity>
+
+                  <Button
+                    style={productStyle.submitBtn}
+                    onPress={submitReviewHandler}
+                  >
+                    <Text style={productStyle.reviewBtnTxt}>Add</Text>
+                  </Button>
+                </View>
+              </Dialog.Content>
+            </Dialog>
           </View>
         </>
       )}
-    </View>
+    </ScrollView>
   );
 };
 
@@ -300,7 +374,10 @@ const productStyle = StyleSheet.create({
   productDescSection4: {
     marginBottom: 15,
   },
-
+  reviewDialog: {
+    backgroundColor: "#fff",
+    height: 400,
+  },
   reviewBtn: {
     marginTop: 15,
     backgroundColor: "#FF6347",
@@ -346,6 +423,7 @@ const productStyle = StyleSheet.create({
     backgroundColor: "#FF6347",
     height: "7%",
     borderRadius: 8,
+    marginBottom: 70,
   },
   addToCartBtnTxt: {
     color: "#fff",
@@ -353,17 +431,40 @@ const productStyle = StyleSheet.create({
   },
   input: {
     backgroundColor: "#fff",
-    borderWidth: 1,
     borderColor: "#b5b5b5",
     padding: 10,
     paddingLeft: 15,
     borderRadius: 5,
     marginVertical: 15,
     fontSize: 15,
+    justifyContent: "flex-start",
+    borderWidth: 0.5,
+    borderColor: "#a8a8a8",
   },
   wishlistContainer: {
     marginVertical: 15,
     flexDirection: "row",
+  },
+  cancelBtn: {
+    justifyContent: "center",
+    backgroundColor: "#900",
+    borderRadius: 8,
+    width: 100,
+    height: 50,
+    alignItems: "center",
+  },
+  submitBtn: {
+    justifyContent: "center",
+    backgroundColor: "#FF6347",
+    borderRadius: 8,
+    width: 100,
+    height: 50,
+    marginLeft: 20,
+    alignItems: "center",
+  },
+  reviewBtnTxt: {
+    color: "#fff",
+    fontSize: 14,
   },
 });
 // info.gasgroup@gmail.com

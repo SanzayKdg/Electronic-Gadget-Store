@@ -8,6 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
+  ToastAndroid,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Avatar, Button } from "react-native-paper";
@@ -25,8 +26,11 @@ const Register = ({ nav, route }) => {
   const [password, setPassword] = useState("");
   const [contact, setContact] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [errors, setErrors] = useState({});
-
+  const [nameErrors, setNameErrors] = useState("");
+  const [emailErrors, setEmailErrors] = useState("");
+  const [contactErrors, setContactErrors] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState("");
+  const [avatarErrors, setAvatarErrors] = useState("");
   const dispatch = useDispatch();
   const { loading, success, message, error } = useSelector(
     (state) => state.auth
@@ -42,18 +46,51 @@ const Register = ({ nav, route }) => {
       }
     }
   }, [route]);
+  // validation functions
+
+  const nameValidation = () => {
+    if (name === "") {
+      setNameErrors("Name is required");
+    } else {
+      setNameErrors("");
+    }
+  };
+  const emailValidation = () => {
+    if (email === "") {
+      setEmailErrors("Email is required");
+    } else {
+      setEmailErrors("");
+    }
+  };
+  const contactValidation = () => {
+    if (contact === "") {
+      setContactErrors("Contact no. is required");
+    } else {
+      setContactErrors("");
+    }
+  };
+  const passwordValidation = () => {
+    if (password === "") {
+      setPasswordErrors("Password is required");
+    } else {
+      setPasswordErrors("");
+    }
+  };
+  const avatarValidation = () => {
+    if (avatar === "") {
+      setAvatarErrors("Profile Image is required");
+    } else {
+      setAvatarErrors("");
+    }
+  };
 
   const registerHandler = () => {
-    const validationErrors = userDataValidation(
-      name,
-      email,
-      contact,
-      password,
-      avatar
-    );
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
+    if (name === "" || email === "" || password === "" || contact === "") {
+      ToastAndroid.show(
+        "Please fill all the required fields",
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
     }
     const myForm = new FormData();
     myForm.append("name", name);
@@ -72,7 +109,7 @@ const Register = ({ nav, route }) => {
   useEffect(() => {
     if (success && formSent === true) {
       alert(message);
-      navigation.navigate("Verify");
+      navigation.navigate("Account");
       setFormSent(false);
     }
 
@@ -92,10 +129,6 @@ const Register = ({ nav, route }) => {
             source={{ uri: avatar ? avatar : null }}
             style={{ backgroundColor: "#FF6347" }}
           />
-
-          {errors.avatar && (
-            <Text style={registerStyle.errorMsg}>{errors.avatar}</Text>
-          )}
           <TouchableOpacity onPress={handleImage}>
             <Text style={{ color: "#FF6347", marginTop: 10 }}>
               Change Photo
@@ -109,9 +142,10 @@ const Register = ({ nav, route }) => {
               value={name}
               onChangeText={setName}
               inputMode="text"
+              onBlur={nameValidation}
             />
-            {errors.name && (
-              <Text style={registerStyle.errorMsg}>{errors.name}</Text>
+            {nameErrors && (
+              <Text style={registerStyle.errorMsg}>{nameErrors}</Text>
             )}
 
             <TextInput
@@ -120,9 +154,10 @@ const Register = ({ nav, route }) => {
               value={email}
               onChangeText={setEmail}
               inputMode="email"
+              onBlur={emailValidation}
             />
-            {errors.email && (
-              <Text style={registerStyle.errorMsg}>{errors.email}</Text>
+            {emailErrors && (
+              <Text style={registerStyle.errorMsg}>{emailErrors}</Text>
             )}
 
             <TextInput
@@ -132,9 +167,10 @@ const Register = ({ nav, route }) => {
               onChangeText={setContact}
               inputMode="decimal"
               maxLength={10}
+              onBlur={contactValidation}
             />
-            {errors.contact && (
-              <Text style={registerStyle.errorMsg}>{errors.contact}</Text>
+            {contactErrors && (
+              <Text style={registerStyle.errorMsg}>{contactErrors}</Text>
             )}
 
             <TextInput
@@ -144,9 +180,10 @@ const Register = ({ nav, route }) => {
               inputMode="text"
               secureTextEntry={true}
               onChangeText={setPassword}
+              onBlur={passwordValidation}
             />
-            {errors.password && (
-              <Text style={registerStyle.errorMsg}>{errors.password}</Text>
+            {passwordErrors && (
+              <Text style={registerStyle.errorMsg}>{passwordErrors}</Text>
             )}
           </View>
 

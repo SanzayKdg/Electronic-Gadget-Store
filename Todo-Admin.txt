@@ -1,4 +1,4 @@
-Admin Components -- TODO
+Admin Components -- TODO 100% DONE
 1. Login --- 100% DONE
 2. Dashboard --- 100% DONE
 3. Products
@@ -14,6 +14,6 @@ Admin Components -- TODO
     ii. Update Orders --- 100% DONE
 6. Reviews --- 100% DONE
 
-TODO
-form validation -- 100% DONE
-pagination
+
+7. form validation -- 100% DONE
+8. pagination -- 100% DONE

@@ -226,7 +226,6 @@ export const forgotPassword = async (req, res, next) => {
   const resetToken = user.getResetPasswordToken();
 
   await user.save({ validateBeforeSave: false });
-
   const resetPasswordUrl = `http://localhost:3000/password/reset/${resetToken}`;
 
   const message = `Please click the below link to reset your password ttemp \n\n ${resetPasswordUrl} \n\n Ignore this message if you did not requested password change.`;
@@ -246,7 +245,13 @@ export const forgotPassword = async (req, res, next) => {
     user.resetPasswordExpire = undefined;
 
     await user.save({ validateBeforeSave: false });
-    return next(new ErrorHandler(error.message, 500));
+    return next(
+      res.status(500).json({
+        success: false,
+        message: "Email does not exists.",
+        error: error.message,
+      })
+    );
   }
 };
 

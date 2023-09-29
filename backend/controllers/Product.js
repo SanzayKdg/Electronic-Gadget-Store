@@ -186,6 +186,7 @@ export const newReview = async (req, res, next) => {
     const { rating, comment, productId } = req.body;
     const review = {
       user: req.user._id,
+      image: req.user.avatar.url,
       name: req.user.name,
       rating: Number(rating),
       comment,
@@ -206,7 +207,6 @@ export const newReview = async (req, res, next) => {
       product.reviews.push(review);
       product.noOfReviews = product.reviews.length;
     }
-
     // Calculate the average review of the product
     let avg = 0;
     product.reviews.forEach((rev) => {
@@ -217,6 +217,7 @@ export const newReview = async (req, res, next) => {
     await product.save({ validateBeforeSave: false });
     res.status(200).json({
       success: true,
+      review,
     });
   } catch (error) {
     res.status(500).json({
@@ -230,6 +231,7 @@ export const newReview = async (req, res, next) => {
 export const getAllreviews = async (req, res, next) => {
   try {
     const product = await Product.findById(req.query.id);
+
     if (!product) {
       return next(
         res.status(404).json({ success: false, message: "Product Not Found" })

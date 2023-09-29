@@ -20,20 +20,44 @@ const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [oldPasswordErrors, setOldPasswordErrors] = useState("");
+  const [newPasswordErrors, setNewPasswordErrors] = useState("");
+  const [confirmPasswordErrors, setConfirmPasswordErrors] = useState("");
+
   const { success, message, error, loading } = useSelector(
     (state) => state.user
   );
   const dispatch = useDispatch();
   const navigation = useNavigation();
+
+  // Validation
+  const oldPasswordValidation = () => {
+    if (oldPassword === "") {
+      setOldPasswordErrors("Old Password is required");
+    } else {
+      setOldPasswordErrors("");
+    }
+  };
+  const newPasswordValidation = () => {
+    if (newPassword === "") {
+      setNewPasswordErrors("New Password is required");
+    } else {
+      setNewPasswordErrors("");
+    }
+  };
+  const confirmPasswordValidation = () => {
+    if (confirmPassword === "") {
+      setConfirmPasswordErrors("Confirm Password is required");
+    } else if (confirmPassword !== newPassword) {
+      setConfirmPasswordErrors("Confirm Password didn't matched");
+    } else {
+      setConfirmPasswordErrors("");
+    }
+  };
+
   const changePasswordHandler = async () => {
     const formData = { newPassword, confirmPassword, oldPassword };
-    if (newPassword === "" || confirmPassword === "" || oldPassword === "") {
-      ToastAndroid.show(
-        "Please fill all the required fields.",
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM
-      );
-    }
+
     if (newPassword !== confirmPassword) {
       ToastAndroid.show(
         "Confirm password didn't matched",
@@ -74,21 +98,39 @@ const ChangePassword = () => {
                 value={oldPassword}
                 onChangeText={setOldPassword}
                 secureTextEntry={true}
+                onBlur={oldPasswordValidation}
               />
+              {oldPasswordErrors && (
+                <Text style={changePasswordStyle.errorMsg}>
+                  {oldPasswordErrors}
+                </Text>
+              )}
               <TextInput
                 style={changePasswordStyle.input}
                 placeholder="New Password"
                 value={newPassword}
                 onChangeText={setNewPassword}
                 secureTextEntry={true}
+                onBlur={newPasswordValidation}
               />
+              {newPasswordErrors && (
+                <Text style={changePasswordStyle.errorMsg}>
+                  {newPasswordErrors}
+                </Text>
+              )}
               <TextInput
                 style={changePasswordStyle.input}
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry={true}
+                onBlur={confirmPasswordValidation}
               />
+              {confirmPasswordErrors && (
+                <Text style={changePasswordStyle.errorMsg}>
+                  {confirmPasswordErrors}
+                </Text>
+              )}
             </View>
 
             <Button
@@ -146,5 +188,9 @@ const changePasswordStyle = StyleSheet.create({
   },
   login: {
     color: "#FF6347",
+  },
+  errorMsg: {
+    color: "#DC4C64",
+    marginBottom: 5,
   },
 });
