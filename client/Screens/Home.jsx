@@ -19,12 +19,21 @@ import { useNavigation } from "@react-navigation/core";
 import { Card } from "react-native-paper";
 import Loader from "../Components/Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllProducts } from "../features/productSlice";
+import {
+  getAllProducts,
+  getRecommendedProducts,
+} from "../features/productSlice";
 import CardCarousel from "../Components/CardCarousel";
 const Home = () => {
   const navigation = useNavigation();
-  const { products, loading, error } = useSelector((state) => state.product);
+  const { products, recommend, loading, error } = useSelector(
+    (state) => state.product
+  );
+
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
   const displayedProducts = products.slice(0, 6);
+  const display_recommended_products = recommend?.slice(0, 6);
   const dispatch = useDispatch();
   useEffect(() => {
     if (error) {
@@ -32,7 +41,10 @@ const Home = () => {
     }
 
     dispatch(getAllProducts({}));
-  }, [dispatch, error]);
+   if(isAuthenticated){
+    dispatch(getRecommendedProducts(user?._id));
+   }
+  }, [dispatch, error, isAuthenticated]);
 
   return (
     <View style={homeStyle.homeContainer}>
@@ -76,34 +88,73 @@ const Home = () => {
             <Loader />
           ) : (
             <View style={homeStyle.products}>
-              {displayedProducts &&
-                displayedProducts?.map((item, index) => (
-                  <Card
-                    onPress={() =>
-                      navigation.navigate("Product", { id: item._id })
-                    }
-                    key={index}
-                    style={homeStyle.cardView}
-                  >
-                    <Image
-                      style={homeStyle.productImage}
-                      source={{ uri: item.images[0].url }}
-                    />
-                    <View style={homeStyle.productDesc}>
-                      <Text style={homeStyle.productDescItem}>{item.name}</Text>
-                      <Text style={homeStyle.productDescItem}>
-                        {item.price}
-                      </Text>
-                      <Rating
-                        startingValue={item.ratings}
-                        ratingCount={5}
-                        imageSize={25}
-                        style={homeStyle.productDescItem}
-                        readonly
-                      />
-                    </View>
-                  </Card>
-                ))}
+              {isAuthenticated ? (
+                <>
+                  {display_recommended_products &&
+                    display_recommended_products?.map((item, index) => (
+                      <Card
+                        onPress={() =>
+                          navigation.navigate("Product", { id: item._id })
+                        }
+                        key={index}
+                        style={homeStyle.cardView}
+                      >
+                        <Image
+                          style={homeStyle.productImage}
+                          source={{ uri: item.images[0].url }}
+                        />
+                        <View style={homeStyle.productDesc}>
+                          <Text style={homeStyle.productDescItem}>
+                            {item.name}
+                          </Text>
+                          <Text style={homeStyle.productDescItem}>
+                            {item.price}
+                          </Text>
+                          <Rating
+                            startingValue={item.ratings}
+                            ratingCount={5}
+                            imageSize={25}
+                            style={homeStyle.productDescItem}
+                            readonly
+                          />
+                        </View>
+                      </Card>
+                    ))}
+                </>
+              ) : (
+                <>
+                  {displayedProducts &&
+                    displayedProducts?.map((item, index) => (
+                      <Card
+                        onPress={() =>
+                          navigation.navigate("Product", { id: item._id })
+                        }
+                        key={index}
+                        style={homeStyle.cardView}
+                      >
+                        <Image
+                          style={homeStyle.productImage}
+                          source={{ uri: item.images[0].url }}
+                        />
+                        <View style={homeStyle.productDesc}>
+                          <Text style={homeStyle.productDescItem}>
+                            {item.name}
+                          </Text>
+                          <Text style={homeStyle.productDescItem}>
+                            {item.price}
+                          </Text>
+                          <Rating
+                            startingValue={item.ratings}
+                            ratingCount={5}
+                            imageSize={25}
+                            style={homeStyle.productDescItem}
+                            readonly
+                          />
+                        </View>
+                      </Card>
+                    ))}
+                </>
+              )}
             </View>
           )}
         </View>

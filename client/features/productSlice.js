@@ -27,9 +27,18 @@ export const getAllProducts = createAsyncThunk(
 // get single product action
 
 export const getSingleProduct = createAsyncThunk(
-  "product/single",
+  "products/single",
   async (id) => {
     const response = await api.get(`/products/${id}`);
+    return response.data;
+  }
+);
+
+// get recommend products from algorithm
+export const getRecommendedProducts = createAsyncThunk(
+  "products/recommend",
+  async (id) => {
+    const response = await api.get(`/product/recommend/${id}`);
     return response.data;
   }
 );
@@ -67,6 +76,17 @@ export const productSlice = createSlice({
         state.product = action.payload.product;
       })
       .addCase(getSingleProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getRecommendedProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getRecommendedProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.recommend = action.payload.recommend;
+      })
+      .addCase(getRecommendedProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

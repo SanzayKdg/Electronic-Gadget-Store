@@ -1,5 +1,5 @@
 import { Wishlist } from "../models/Wishlist.js";
-
+import { User } from "../models/User.js";
 // add to wish list
 export const addToWishlist = async (req, res, next) => {
   try {
@@ -8,6 +8,19 @@ export const addToWishlist = async (req, res, next) => {
       product,
       user,
     });
+
+    await User.findByIdAndUpdate(
+      user,
+      {
+        // $addToSet doesnot let duplicate entries to occur
+        $addToSet: { my_preference: product },
+      },
+      {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
+      }
+    ).exec();
 
     res.status(200).json({
       wishlist,

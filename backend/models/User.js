@@ -41,6 +41,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "user",
   },
+  my_preference: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      default: null,
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
