@@ -334,111 +334,177 @@ export const deleteProductReviews = async (req, res, next) => {
 };
 
 // Recommend Products with Algorithm
-export const showRecommendations = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.params.id).populate("my_preference");
 
-    if (!user) {
-      return next(res.status(404).json({ message: "User not found" }));
-    }
+// item-based coolaborative filtering of product using cosine similarity
+function cosineSimilarity(vec1, vec2) {
+  // calculate dot product
+  const dot_product = vec1.reduce(
+    (acc, rating, index) => acc + rating * vec2[index],
+    0
+  );
 
-    const recommendation = {};
+  // calculate magnitude of the vectors
+  const magnitude1 = Math.sqrt(
+    vec1.reduce((acc, rating) => acc + rating ** 2, 0)
+  );
+  const magnitude2 = Math.sqrt(
+    vec2.reduce((acc, rating) => acc + rating ** 2, 0)
+  );
 
-    // Iterate through the user's preferences
-    for (const preferred_product of user.my_preference) {
-      // Find products in the same category as the preferred product
-      const similar_products = await Product.find({
-        category: preferred_product.category,
-        _id: { $ne: preferred_product.id },
-      });
+  // calculate cosine similarity
+  return dot_product / (magnitude1 * magnitude2);
+}
 
-      // Calculate the weighted rating for each similar product
-      for (const product of similar_products) {
-        if (!recommendation[product._id]) {
-          recommendation[product._id] = {
-            product,
-            similarity_sum: 0,
-            rating_sum: 0,
-          };
-        }
+export const recommendProduct = async (req, res, next) => {
+  const user = await User.findById(req.params.id).populate("my_preference");
 
-        const similarity = calculateSimilarity(
-          preferred_product.category,
-          product.category
-        );
+  const user_ratings = user.my_preference.map((product) => product.ratings);
+  const product_category = await Product.find({
+    category: { $in: user.my_preference.map((product) => product.category) },
+  });
 
-        // Calculate weighted rating
-        const weightedRating = userRating(user, product) * similarity;
-
-        recommendation[product._id].similarity_sum += similarity;
-        recommendation[product._id].rating_sum += weightedRating;
-      }
-    }
-
-    // Filter out products the user has already rated
-    const alreadry_rated_products = user.my_preference.map(
-      (product) => product._id
+  // calculate similarity for each product in the category
+  const recommendations = product_category.map((product) => {
+    const product_ratings = user.my_preference.map(
+      (preference) => preference.ratings || 0
     );
+    const similarity = cosineSimilarity(user_ratings, product_ratings);
+    return { product, similarity };
+  });
 
-    for (const product_id of alreadry_rated_products) {
-      delete recommendation[product_id];
-    }
+  // calculate weighted sum of ratings based on similarities
+  const total_similarity = recommendations.reduce(
+    (acc, item) => acc + item.similarity,
+    0
+  );
 
-    // Normalize and sort the recommendations
-    const recommend_prodcuts = Object.values(recommendation)
-      .map((item) => {
-        item.product.weightedRating = item.similarity_sum;
-        return item.product;
-      })
-      .sort((a, b) => b.weightedRating - a.weightedRating);
+  const predicted_ratings = recommendations.map((item) => {
+    const weighted_sum = item.product.ratings * item.similarity;
+    const predicted_rating =
+      total_similarity !== 0 ? weighted_sum / total_similarity : 0;
+    return { ...item.product.toObject(), predicted_rating };
+  });
 
-    res.status(200).json({ recommend: recommend_prodcuts });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+  // sort recommended products by ratings
+  predicted_ratings.sort((a, b) => b.predicted_rating - a.predicted_rating);
+
+  // return recommended products without the user's existing preferences
+  const recommended_prodcuts = predicted_ratings
+    .filter((item) => !user.my_preference.map((p) => p._id).includes(item._id))
+    // Set ratings to predicted ratings
+    .map((item) => ({ ...item, ratings: item.predicted_rating }));
+
+  res.status(200).json({ recommend: recommended_prodcuts });
 };
+ 
 
-// calculate category similarity
-function calculateSimilarity(category1, category2) {
-  const set1 = new Set(category1.toLowerCase().split(" "));
-  const set2 = new Set(category2.toLowerCase().split(" "));
 
-  // Calculate the intersection and union of the two sets
-  const intersectionSize = new Set([...set1].filter((x) => set2.has(x))).size;
-  const unionSize = set1.size + set2.size - intersectionSize;
+// item-based coolaborative filtering of product using jaccard similarity
+// export const showRecommendations = async (req, res, next) => {
+//   try {
+//     const user = await User.findById(req.params.id).populate("my_preference");
 
-  // Calculate the Jaccard similarity coefficient
-  const similarity = intersectionSize / unionSize;
+//     if (!user) {
+//       return next(res.status(404).json({ message: "User not found" }));
+//     }
 
-  return similarity;
-}
+//     const recommendation = {};
 
-// calculate user rating for a product
-function userRating(user, product) {
-  let rating_sum = 0;
-  let similarity_sum = 0;
+//     // Iterate through the user's preferences
+//     for (const preferred_product of user.my_preference) {
+//       // Find products in the same category as the preferred product
+//       const similar_products = await Product.find({
+//         category: preferred_product.category,
+//         _id: { $ne: preferred_product.id },
+//       });
 
-  for (const preferred_product of user.my_preference) {
-    // Calculate the Jaccard similarity between the user's preferred category and the product's category
-    const category_similarity = calculateSimilarity(
-      preferred_product.category,
-      product.category
-    );
+//       // Calculate the weighted rating for each similar product
+//       for (const product of similar_products) {
+//         if (!recommendation[product._id]) {
+//           recommendation[product._id] = {
+//             product,
+//             similarity_sum: 0,
+//             rating_sum: 0,
+//           };
+//         }
 
-    // If the user has rated the preferred product and the categories are similar
-    if (preferred_product.rating && category_similarity > 0) {
-      rating_sum += preferred_product.rating * category_similarity;
-      similarity_sum += category_similarity;
-    }
-  }
+//         const similarity = calculateSimilarity(
+//           preferred_product.category,
+//           product.category
+//         );
 
-  // To avoid division by zero
-  if (similarity_sum === 0) {
-    return 0;
-  }
+//         // Calculate weighted rating
+//         const weightedRating = userRating(user, product) * similarity;
 
-  return rating_sum / similarity_sum;
-}
+//         recommendation[product._id].similarity_sum += similarity;
+//         recommendation[product._id].rating_sum += weightedRating;
+//       }
+//     }
+
+//     // Filter out products the user has already rated
+//     const alreadry_rated_products = user.my_preference.map(
+//       (product) => product._id
+//     );
+
+//     for (const product_id of alreadry_rated_products) {
+//       delete recommendation[product_id];
+//     }
+
+//     // Normalize and sort the recommendations
+//     const recommend_prodcuts = Object.values(recommendation)
+//       .map((item) => {
+//         item.product.weightedRating = item.similarity_sum;
+//         return item.product;
+//       })
+//       .sort((a, b) => b.weightedRating - a.weightedRating);
+
+//     res.status(200).json({ recommend: recommend_prodcuts });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
+// // calculate category similarity
+// function calculateSimilarity(category1, category2) {
+//   const set1 = new Set(category1.toLowerCase().split(" "));
+//   const set2 = new Set(category2.toLowerCase().split(" "));
+
+//   // Calculate the intersection and union of the two sets
+//   const intersectionSize = new Set([...set1].filter((x) => set2.has(x))).size;
+//   const unionSize = set1.size + set2.size - intersectionSize;
+
+//   // Calculate the Jaccard similarity coefficient
+//   const similarity = intersectionSize / unionSize;
+
+//   return similarity;
+// }
+
+// // calculate user rating for a product
+// function userRating(user, product) {
+//   let rating_sum = 0;
+//   let similarity_sum = 0;
+
+//   for (const preferred_product of user.my_preference) {
+//     // Calculate the Jaccard similarity between the user's preferred category and the product's category
+//     const category_similarity = calculateSimilarity(
+//       preferred_product.category,
+//       product.category
+//     );
+
+//     // If the user has rated the preferred product and the categories are similar
+//     if (preferred_product.rating && category_similarity > 0) {
+//       rating_sum += preferred_product.rating * category_similarity;
+//       similarity_sum += category_similarity;
+//     }
+//   }
+
+//   // To avoid division by zero
+//   if (similarity_sum === 0) {
+//     return 0;
+//   }
+
+//   return rating_sum / similarity_sum;
+// }

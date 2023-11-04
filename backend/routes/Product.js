@@ -9,7 +9,8 @@ import {
   getProductDetails,
   getProductsAdmin,
   newReview,
-  showRecommendations,
+  recommendProduct,
+  // showRecommendations,
   updateProducts,
 } from "../controllers/Product.js";
 
@@ -27,7 +28,8 @@ router
   .get(getAllreviews)
   .delete(isAuthenticated, deleteProductReviews);
 
-router.route("/product/recommend/:id").get(isAuthenticated, showRecommendations);
+// router.route("/product/recommend/:id").get(isAuthenticated, showRecommendations);
+router.route("/product/recommend/:id").get(isAuthenticated, recommendProduct);
 
 // ADMIN ROLE
 router
